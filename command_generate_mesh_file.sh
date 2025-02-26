@@ -1,0 +1,4 @@
+
+python3 generate_mesh_and_pointcloud/recover_allegro_hand_to_stl.py
+python3 generate_mesh_and_pointcloud/recover_dh3_hand_to_stl.py
+python3 generate_mesh_and_pointcloud/recover_inspire_hand_to_stl.py

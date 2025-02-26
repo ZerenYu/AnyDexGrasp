@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="92e38bd8-6479-4858-9771-abd29d274a15" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/COPYING" beforeDir="false" afterPath="$PROJECT_DIR$/COPYING" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/debian/compat" beforeDir="false" afterPath="$PROJECT_DIR$/debian/compat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/debian/control" beforeDir="false" afterPath="$PROJECT_DIR$/debian/control" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/debian/python-urx.pyinstall" beforeDir="false" afterPath="$PROJECT_DIR$/debian/python-urx.pyinstall" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/debian/python3-urx.install" beforeDir="false" afterPath="$PROJECT_DIR$/debian/python3-urx.install" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/debian/rules" beforeDir="false" afterPath="$PROJECT_DIR$/debian/rules" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/docs/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/conf.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/conf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/index.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docs/index.rst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/robot.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docs/robot.rst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/urrobot.rst" beforeDir="false" afterPath="$PROJECT_DIR$/docs/urrobot.rst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/get_robot.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/get_robot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/joystick_control.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/joystick_control.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/matrices.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/matrices.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/simple.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/simple.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/spnav_control.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/spnav_control.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/test_all.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/test_all.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/test_movep.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/test_movep.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/make_windows_installer.bat" beforeDir="false" afterPath="$PROJECT_DIR$/make_windows_installer.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/release.py" beforeDir="false" afterPath="$PROJECT_DIR$/release.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/fakerobot.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/fakerobot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/find_packet.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/find_packet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/get_rob.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/get_rob.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/grabber.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/grabber.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/packet.bin" beforeDir="false" afterPath="$PROJECT_DIR$/tools/packet.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/urx/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/urx/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/urx/robot.py" beforeDir="false" afterPath="$PROJECT_DIR$/urx/robot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/urx/robotiq_two_finger_gripper.py" beforeDir="false" afterPath="$PROJECT_DIR$/urx/robotiq_two_finger_gripper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/urx/urrobot.py" beforeDir="false" afterPath="$PROJECT_DIR$/urx/urrobot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/urx/urrtmon.py" beforeDir="false" afterPath="$PROJECT_DIR$/urx/urrtmon.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/urx/ursecmon.py" beforeDir="false" afterPath="$PROJECT_DIR$/urx/ursecmon.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1zkrU4gulezRnHH3RjdQhgXyFs0" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ur" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="92e38bd8-6479-4858-9771-abd29d274a15" name="Changes" comment="" />
+      <created>1634702939105</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1634702939105</updated>
+    </task>
+    <servers />
+  </component>
+</project>
