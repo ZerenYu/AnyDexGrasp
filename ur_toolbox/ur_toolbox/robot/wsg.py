@@ -78,13 +78,6 @@ class WSG:
             MESSAGE = str.encode(f"MOVE({position}, {speed})\n")
             self.tcp_sock.send(MESSAGE)
             return self.wait_for_msg(b"FIN MOVE\n")
-    # def open_gripper(self, sleep_time = 0):
-    #     """
-    #     Release: Release object by opening fingers by 20 mm.
-    #     """
-    #     MESSAGE = str.encode("RELEASE()\n")
-    #     self.tcp_sock.send(MESSAGE)
-    #     return self.wait_for_msg(b"FIN RELEASE\n")
 
     def get_gripper_position(self, distance):
         if distance > 110:

@@ -52,20 +52,10 @@ class MultifingerDataset(Dataset):
         self.dataset_type = dataset_type
         self.train_type = train_type
         self.num_multifinger_type = num_multifinger_type
-        # self.data_dirs = [os.path.join(self.root, subdir) for subdir in os.listdir(self.root)]
-        
-        # for sub in self.data_dirs:
-        #     information_json_file_name = os.path.join(sub, "information.json")
-        #     with open(information_json_file_name) as f:
-        #         information = json.load(f)
-        #     if information["two_fingers_pose"][10] < 0.85:
-        #         pass
 
         if self.dataset_type == "train":
-            # self.data_dirs = self.data_dirs
             information_json_file_name = os.path.join(root.split('train_sr')[0], 'obj140.json')
         elif self.dataset_type == "test":
-            # self.data_dirs = self.data_dirs
             information_json_file_name = os.path.join(root.split('test_sr')[0], 'test_single_point.json')
         else:
             raise ValueError("dataset type must be \"test\" or \"train\"")
@@ -92,7 +82,6 @@ class MultifingerDataset(Dataset):
     def get_true_false_rate(self):
         true_number = 0
         false_number = 0
-        # grasp_type = [[[0, 0, 0] for _ in range(4)] for _ in range(self.num_multifinger_type)]
         grasp_type = [[0, 0, 0] for _ in range(4)]
         pose_excluded = {''}
         print(self.train_type)
@@ -113,8 +102,6 @@ class MultifingerDataset(Dataset):
                 continue
 
             result = v['result']
-            # if gripper_type in [4, 5]:
-            #     depth_type = depth_type - 2
             if result:
                 grasp_type[depth_type][0] += 1
             else:
@@ -150,10 +137,7 @@ class MultifingerDataset(Dataset):
         elif self.multifinger_type == 'Allegro':
             ret_dict['multifinger_pose_finger_type'] = np.array([information["Allegro_pose_finger_type"]], dtype = np.int32)
             ret_dict['multifinger_pose_depth_type'] = np.array([information["Allegro_pose_depth_type"]], dtype = np.int32)
-        # ret_dict['if_collision'] = np.array(information["if_collision"], dtype=np.int32) # [16]
-        # ret_dict['two_fingers_pose'] = np.array(two_fingers_pose, dtype = np.float32) # [17]
 
-        # ret_dict['AD_scores'] = np.array(information['two_fingers_pose_AD'], dtype = np.float32) # [60]
         ret_dict['if_flip'] = np.array([information['if_flip']]).astype(np.int32) # 1 for Flip and 0 for not
         grasp_preds_features = np.array(information['grasp_preds_features'], dtype = np.float32)[:480] # [480]
 
@@ -175,10 +159,6 @@ class MultifingerDataset(Dataset):
         grasp_preds_features_rot[480-new_type*5:480] = grasp_preds_features[240:240+new_type*5]
         
         ret_dict['grasp_preds_features'] = grasp_preds_features_rot[:480] # [480]
-        # ret_dict['bin_features'] = np.array(information['two_fingers_pose_features'], dtype = np.float32) # [256]
-        # ret_dict['before_generator'] = np.array(information['two_fingers_pose_features_before_generator'], dtype = np.float32) # [256]
-        # ret_dict['AD_scores_before_generator'] = np.array(information['two_fingers_pose_AD'], dtype = np.float32) # [60]
-        # ret_dict['point_features'] = np.array(information['point_features'], dtype = np.float32) # [512]
         
         ret_dict['result'] = np.array([information['result']]).astype(np.int32) # 1 for True and 0 for False
         return ret_dict
@@ -192,14 +172,9 @@ def collate_fn(batch):
         return [[torch.from_numpy(sample) for sample in b] for b in batch]
     elif isinstance(batch[0], container_abcs.Mapping):
         ret_dict = {key:collate_fn([d[key] for d in batch]) for key in batch[0]}
-        # coords_batch = ret_dict['coords']
-        # feats_batch = ret_dict['feats']
-        # coords_batch, feats_batch = ME.utils.sparse_collate(coords_batch, feats_batch)
-        # ret_dict['coords'] = coords_batch
-        # ret_dict['feats'] = feats_batch
+
         for key in ret_dict.keys():
             if not key in ['coords', 'feats', 'sinput']:
-                # print('####', key, ret_dict[key])
                 ret_dict[key] = torch.tensor([d.numpy() for d in ret_dict[key]])
         return ret_dict
     raise TypeError("batch must contain tensors, dicts or lists; found {}".format(type(batch[0])))
@@ -217,68 +192,3 @@ def convert_data_to_gpu(data):
         ret_dict[key] = convert_data_to_device(data[key], "cuda:0")
     return ret_dict
 
-if __name__ == "__main__":
-    ROOT = "/disk2/hengxu/yhx/InspireHandR_data/inspire_final_pose12_data/train_sr/"
-    save_json_path = '/disk2/hengxu/yhx/InspireHandR_data/inspire_final_pose12_data/train_sr.json'
-    # ROOT = "/disk2/hengxu/yhx/InspireHandR_data/DH3_data/train_sr"
-    # save_json_path = '/disk2/hengxu/yhx/InspireHandR_data/DH3_data/train_sr.json'
-    # dataset = InspireHandDataset(root = ROOT, dataset_type = "train", voxel_size = 0.005)
-    # print(dataset.data_dirs[1625])
-    from tqdm import tqdm
-    fail = 0
-    grasp_type = [[[0, 0, 0] for _ in range(4)] for _ in range(12)]
-    all_data_json = dict()
-    # for i in tqdm(range(len(dataset)), "check data"):
-    num = 0
-    for i in tqdm(os.listdir(ROOT), "check data"):
-        # try:
-                in_path = os.path.join(ROOT, i, 'information.json')
-                
-                with open(in_path, 'r') as f:
-                    information = json.load(f)
-                # print(information.keys())
-                # break
-                del information['before_collision']
-                del information['after_collision']
-                del information['base_2_tcp1']
-                del information['base_2_tcp1_backup']
-                del information['tcp_2_gripper']
-                del information['base_2_TwoFingersGripper_pose']
-                del information['tcp_2_camera']
-                del information['base_2_tcp_ready']
-                del information['camera_internal']
-                del information['two_fingers_ggarray_proposals']
-                del information['InspireHandR_ggarray_proposals']
-                del information['two_fingers_ggarray_informations_proposals']
-                del information['two_fingers_ggarray_source']
-                del information['InspireHandR_ggarray_source_saved']
-                
-                all_data_json[i] = information
-
-                two_fingers_pose_features = information['two_fingers_pose_AD']
-                gripper_type =  information['InspiredHandR_pose_finger_type'] 
-                depth_type =  information['InspiredHandR_pose_depth_type']
-                result = information['result']
-
-                if gripper_type in [4, 5]:
-                    depth_type = depth_type - 2
-                if result:
-                    grasp_type[gripper_type][depth_type][0] += 1
-                else:
-                    grasp_type[gripper_type][depth_type][1] += 1
-                grasp_type[gripper_type][depth_type][2] += 1
-
-                if len(two_fingers_pose_features) != 60:
-                    print(i, len(two_fingers_pose_features), two_fingers_pose_features)
-                    fail += 1  
-
-
-        # except:
-        #     print("Wrong with {}".format(i))
-                
-    json_file = json.dumps(all_data_json, indent=4)
-    with open(save_json_path, 'w') as handle:
-        handle.write(json_file)
-    for i in range(len(grasp_type)):
-        print('grasp disrtribution', grasp_type[i])
-    print(fail)

@@ -23,12 +23,6 @@ grasp_types = {'1':{'name': 'Large_Diameter',          'facenet_thumb': [[22524,
                 '6':{'name': 'Adduction_Grip',         'facenet_thumb': [[7342, 2]],  'facenet_index': [[11609, 2], [7320, 1], [11536, 0]], 'width':[0, 0.078],
                     'close_pose_matrix': np.array([[-0.46, 0.196, 0.174, 0.227], [0.46, 0.196, 0.174, 0.227], [0.4, 1.3, 0.95, 0.85], [1, 1, 1.5, 0.5]]),
                     'close_pose_torque': np.array([[-1, 0, 0, 0], [1, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]])},
-                # '6':{'name': 'Prismatic_2_Finger',     'facenet_thumb': [[22428, 1]], 'facenet_index': [[4426, 1], [11694, 2]], 'width':[0.01, 0.12],
-                #     'close_pose_matrix': np.array([[0.4, 0.9, 0.4, 0.6], [0.46, 1.4, 0.7, 0.3], [0.46, 1.6, 0.8, 0.7], [0.5, 0.5, 1.4, 0.1]]),
-                #     'close_pose_torque': np.array([[0, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 1, 1]])},
-                # '7':{'name': 'Prismatic_3_Finger',    'facenet_thumb': [[22428, 1]], 'facenet_index': [[4426, 1], [15992, 0]], 'width':[0.032, 0.12],
-                #     'close_pose_matrix': np.array([[0.26, 0.95, 0, 1], [0.25, 0.95, 0, 1], [0.45, 1.1, 0.7, 0.3], [0.7, 0.5, 1.15, 0.5]]),
-                #     'close_pose_torque': np.array([[0, 1, 1, 1], [0, 1, 1, 1], [0, 0, 0, 0], [0, 0, 1, 1]])},
                 '7':{'name': 'Writing_Tripod',         'facenet_thumb': [[22563, 2]], 'facenet_index': [[7337, 0], [7348, 0]], 'width':[0, 0.12],
                     'close_pose_matrix': np.array([[-0.25, 1.1, 0.7, 0.7], [0, 1.3, 0.75, 0.75], [0.2, 1.3, 0.75, 0.75], [1.2, 0.45, 0.75, 0.65]]),
                     'close_pose_torque': np.array([[0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 1, 1], [0, 0, 1, 1]])},
@@ -38,9 +32,6 @@ grasp_types = {'1':{'name': 'Large_Diameter',          'facenet_thumb': [[22524,
                 '9':{'name': 'Lateral',                'facenet_thumb': [[22615, 1]], 'facenet_index': [[5729, 1], [5729, 0]], 'width':[0, 0.12],
                     'close_pose_matrix': np.array([[0.46, 1.7, 1.05, 0.8], [0.46, 1.7, 1.05, 0.8], [0.46, 1.7, 0.85, 0.8], [0.3, 0.4, 1.05, 0.8]]),
                     'close_pose_torque': np.array([[-1, 0, 0, 0], [-1, 0, 0, 0], [-1, 0, 0, 0], [0, 0, 1, 1]])},
-                # '11':{'name': 'Stick',                  'facenet_thumb': [[22615, 1]], 'facenet_index': [[4426, 0], [4426, 1]], 'width':[0, 0.12],
-                #     'close_pose_matrix': np.array([[0.45, 1.1, 0.5, 0.5], [0.3, 1.6, 1.6, 1.6], [0.3, 1.6, 1.6, 1.6], [0.3, 0.4, 1.3, 0.7]]),
-                #     'close_pose_torque': np.array([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 1, 1]])},
                 '10':{'name': 'Prismatic_2_Finger',        'facenet_thumb': [[22524, 2]], 'facenet_index': [[7342, 2], [11614, 2]], 'width':[0, 0.12],
                     'close_pose_matrix': np.array([[0, 1.4, 0.6, 0.5], [0, 1.4, 0.6, 0.5], [0, 1.4, 1.4, 1.4], [1.496, 0, 0.75, 0.5]]),
                     'close_pose_torque': np.array([[0, 1, 1, 1], [0, 1, 1, 1], [0, 0, 0, 0], [0, 0, 1, 1]])},
@@ -353,7 +344,6 @@ class AllegroGrasp():
         self.translation = Allegro_translation
         self.rotation_matrix = Allegro_rotation
         self.angle = angle
-        # return Allegro_translation, Allegro_rotation, angle
 
     def from_grasp(self, two_fingers_grasp, Allegrotype, path_json):
         """Grasp to AllegroGrasp Transformation.
@@ -626,12 +616,10 @@ class AllegroGraspGroup():
 
             angle = width_16D_angle[self.get_graspgroup_types_with_finger_names()[idx]][str(np.round(width * 100, 1))]['16d']
             Allegro_angles.append(np.array(angle).reshape(16))
-        print('translations: ', len(self), len(Allegro_translations))
         self.widths = np.array(Allegro_widths)
         self.translations = np.array(Allegro_translations)
         self.rotation_matrices = np.array(Allegro_rotations)
         self.angles = np.array(Allegro_angles)
-        # return np.array(Allegro_translations), np.array(Allegro_rotations), np.array(Allegro_angles)
 
     def from_npy(self, npy_file_path):
         '''
@@ -792,5 +780,3 @@ class AllegroGraspGroup():
             index: numpy array of shape (len(grasp_group_array), 1).
         '''
         self.grasp_group_array = self.grasp_group_array[index]
-        # self.source_meshes_Allegro = self.source_meshes_Allegro[index]
-        # np.delete(self.source_meshes_Allegro, np.s_[len(index):], axis=0)

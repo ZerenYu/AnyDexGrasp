@@ -24,15 +24,11 @@ class RealSense():
         self.colorizer = rs.colorizer()
 
         frames = self.pipeline.wait_for_frames()
-        # frames.keep()
-        # 获取对齐帧集
         aligned_frames = self.align.process(frames)
 
-        # 获取对齐后的深度帧和彩色帧
         aligned_depth_frame = aligned_frames.get_depth_frame()
         color_frame = aligned_frames.get_color_frame()
 
-        # 获取颜色帧内参
         color_profile = color_frame.get_profile()
         cvsprofile = rs.video_stream_profile(color_profile)
         color_intrin = cvsprofile.get_intrinsics()

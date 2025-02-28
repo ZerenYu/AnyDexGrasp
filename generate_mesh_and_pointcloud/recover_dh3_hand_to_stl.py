@@ -27,11 +27,6 @@ joint_mesh_mapping = {"base": "base_Link.STL",
                       "9": "finger3_Link.STL",
                       "10": "finger3_outlet_Link.STL",
                       "11": "finger3_tip_Link.STL"}
-# grasp_types = {'1':{'name': 'pose1', 'facenet_thumb': [60388], 'facenet_index': [69638, 51138]},
-#                 '2':{'name': 'pose2', 'facenet_thumb': [60388], 'facenet_index': [69638, 51138]},
-#                 '3':{'name': 'pose3', 'facenet_thumb': [60388], 'facenet_index': [69638, 51138]},
-#                 '4':{'name': 'pose4', 'facenet_thumb': [60388], 'facenet_index': [69641, 51169]},
-#                 }
 
 def vis_pybullet(urdf_path):
     clid = p.connect(p.SHARED_MEMORY)
@@ -44,7 +39,6 @@ def vis_pybullet(urdf_path):
     i=0
     p.setPhysicsEngineParameter(solverResidualThreshold=0, maxNumCmdPer1ms=1000)
     p.setTimeStep(timeStep)
-    # p.setGravity(0,0,-9.8	)
     p.resetDebugVisualizerCamera(cameraDistance=0.7, cameraYaw=2, cameraPitch=2, cameraTargetPosition=[-0.35,-0.0,-0.0])
 
     flags = p.URDF_ENABLE_CACHED_GRAPHICS_SHAPES
@@ -56,7 +50,6 @@ def vis_pybullet(urdf_path):
     limit = []
     for i in range(p.getNumJoints(hand)):
         info = p.getJointInfo(hand, i)
-        # print(info)
         limit.append([info[8], info[9]])
     print(limit)
     finger1_1 = p.addUserDebugParameter("finger1-1", -1.0, 0.54, 0.01)
@@ -73,7 +66,6 @@ def vis_pybullet(urdf_path):
     finger3_2 = p.addUserDebugParameter("finger3-2", 0, 1.16, 0.01)
     finger3_3 = p.addUserDebugParameter("finger3-3", -1, 1, 0.01)
     finger3_4 = p.addUserDebugParameter("finger3-4", 0, 0, 0.01)
-    # while True:
     p.resetJointState(hand, 0, p.readUserDebugParameter(finger1_1))
     p.resetJointState(hand, 1, p.readUserDebugParameter(finger1_2))
     p.resetJointState(hand, 2, p.readUserDebugParameter(finger1_3))
@@ -111,8 +103,6 @@ def read_excel_2D_angle_to_12D_angle(path_2d):
                 (1.08, -0.43), (1.333, 0.), (0.06, 0.01), (0.1, 0)] 
     wb_6d = xlrd2.open_workbook(path_2d) 
     for pose_id in range(len(wb_6d.sheets())):
-        # if pose_id != 0:
-        #     continue
         sheet_6d = wb_6d.sheet_by_index(pose_id)
 
         width = sheet_6d.col_values(0)[1:]
@@ -121,8 +111,6 @@ def read_excel_2D_angle_to_12D_angle(path_2d):
         positions = sheet_6d.col_values(1)[1:]
         rotations = sheet_6d.col_values(2)[1:]
         for ids, _ in enumerate(positions):
-            # if ids < 60:
-            #     continue
             if positions[ids] == -1:
                 continue
             rotation0 = rate((0, 95), pos_scope[0], rotations[ids])
@@ -174,8 +162,6 @@ def get_mesh(po, id, PATH):
     lingk_mesh = copy.deepcopy(link)
 
     link = link.transform(t_angle)
-    # if id in [3, 7, 11]:
-    #     t_angle[2,3] = t_angle[2,3] + 0.008
     link_mesh = lingk_mesh.transform(t_angle)    
     return link, link_mesh
 
@@ -205,13 +191,11 @@ def save_stl_and_pointcloud(name, angle, mesh, output_path):
 
 def get_meshes(angles, stl_path, output_path, width_12D_angle_2D_angle_json, urdf_path, if_source, vis):
     p, hand = open_pybullet(urdf_path)
-    # p.stepSimulatiograsp_n()
     angles_to_stls = DH3Angles2STLs(grasp_types)
     width_12D_angle_2D_angle = dict()
     for grasp_type, angle8 in enumerate(angles):
         for ids in tqdm([i for i in range(len(angle8))]):
             angle = angle8[ids]
-            # print(angle)
             width = np.round(angle[12], 1)
 
             path_file = stl_path + joint_mesh_mapping['base']
@@ -246,7 +230,6 @@ def get_meshes(angles, stl_path, output_path, width_12D_angle_2D_angle_json, urd
                     width_12D_angle_2D_angle[name] = dict()
                 width_12D_angle_2D_angle[name][str(width)] = {'12d': angles[grasp_type][ids][:12], '2d': angles[grasp_type][ids][13:],
                                                         'translation': translation,  'rotation': rotation}
-                # print(translation, rotation)
 
     if if_source:
         json_str = json.dumps(width_12D_angle_2D_angle, indent=4)
@@ -264,7 +247,6 @@ def modify_width(output_path, json_path, pose, distance=0.5):
             information = json.load(f)
         for name in file_path:
             width = round(float(name.split('.STL')[0]) - distance, 1)
-            # print(width, name)
             old_mesh_name = os.path.join(mesh_path, name)
             new_mesh_name = os.path.join(mesh_path, str(width) + '.STL')
             
@@ -298,7 +280,6 @@ if __name__ == '__main__':
     json_path = './generate_mesh_and_pointcloud/dh3_urdf/width_12D_angle_2D_angle.json'
 
     urdf_path = './generate_mesh_and_pointcloud/dh3_urdf/dh3_urdf/urdf/dh3_urdf.urdf'
-    # vis_pybullet(urdf_path)
 
     angles = read_excel_2D_angle_to_12D_angle(path_6d)
     get_meshes(angles, source_stl_path, output_path, json_path, urdf_path, if_source=True, vis=False)

@@ -26,7 +26,6 @@ def huber_loss(error, delta=1.0):
     Ref: https://github.com/charlesq34/frustum-pointnets/blob/master/models/model_util.py
     """
     abs_error = torch.abs(error)
-    #quadratic = torch.min(abs_error, torch.FloatTensor([delta]))
     quadratic = torch.clamp(abs_error, max=delta)
     linear = (abs_error - quadratic)
     loss = 0.5 * quadratic**2 + delta * linear

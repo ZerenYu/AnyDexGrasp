@@ -10,11 +10,6 @@ from PIL import Image
 import open3d as o3d
 import copy
 import math
-# from moviepy.editor import VideoFileClip, concatenate_videoclips, TextClip, CompositeVideoClip
-# import moviepy.video.fx.all as vfx
-# import moviepy.video.io.preview as preview
-# from graspnetAPI import GraspGroup, Grasp
-# from InspireHandR_grasp import InspireHandRGraspGroup, InspireHandRGrasp
 
 def read_picture(path):
     color_path = os.path.join(path, 'color.png')
@@ -43,7 +38,6 @@ def read_picture(path):
     cloud.points = o3d.utility.Vector3dVector(points)
     
     cloud.colors = o3d.utility.Vector3dVector(colors)
-    # o3d.visualization.draw_geometries([cloud])
     return cloud
     
 def read_json(data_path, mesh_path, voxel_size, DEBUG=True):
@@ -72,7 +66,6 @@ def read_json(data_path, mesh_path, voxel_size, DEBUG=True):
     base_2_TwoFingersGripper_pose = information['base_2_TwoFingersGripper_pose']
     tcp_2_camera = information['tcp_2_camera']
     base_2_tcp_ready = information['base_2_tcp_ready']
-    # result = information['result']
     two_fingers_ggarray_proposals = np.array(information['two_fingers_ggarray_proposals'])
     InspireHandR_ggarray_proposals = np.array(information['InspireHandR_ggarray_proposals'])
     two_fingers_ggarray_source_saved = np.array(information['two_fingers_ggarray_source'])
@@ -112,9 +105,6 @@ def read_json(data_path, mesh_path, voxel_size, DEBUG=True):
         b = base_2_TwoFingersGripper_pose
         c = np.dot(np.dot(base_2_tcp_ready, tcp_2_camera), camera_InspireHandR_pose)
         d = np.dot(np.dot(base_2_tcp_ready, tcp_2_camera), camera_TwoFingers_pose)
-        # print(a,'\n',b,'\n',c,'\n',d)
-        # print(np.max(np.around(a, 3) - np.around(b, 3)) > 0.0001, np.max(np.around(a, 3) - np.around(c, 3)) > 0.0001, np.max(np.around(a, 3) - np.around(d, 3)) > 0.0001)
-
 
     return InspireHandR_grasp, two_fingers_grasp, InspireHandR_ggarray_proposals, two_fingers_ggarray_proposals, \
            base_2_tcp_ready, tcp_2_camera, base_2_tcp1, source_mesh, source_mesh_pointclouds
@@ -136,8 +126,6 @@ def read_file(data_path, mesh_path, image_output_path, voxel_size=0.002):
     i = 0
     sorted_data_path = sorted(os.listdir(data_path))
     for file in tqdm(sorted_data_path):
-        # if i > 3:
-        #     break
         i = i + 1
         data = os.path.join(data_path, file)
         pointcloud = read_picture(data)
@@ -149,7 +137,6 @@ def read_file(data_path, mesh_path, image_output_path, voxel_size=0.002):
             two_fingers_ggarray_proposals = all_information[3]
             base_2_tcp_ready = all_information[4]
             tcp_2_camera = all_information[5]
-            # base_2_tcp1 = all_information[6]
             source_mesh = all_information[7]
             source_mesh_pointclouds = all_information[8]
 
@@ -162,7 +149,6 @@ def read_file(data_path, mesh_path, image_output_path, voxel_size=0.002):
             voxel_grid = o3d.geometry.VoxelGrid.create_from_point_cloud(input=source_mesh_pointclouds, voxel_size=voxel_size)
             two_fingers = two_fingers_grasp.to_open3d_geometry()
             two_fingers.transform(np.dot(base_2_tcp_ready, tcp_2_camera))
-            # o3d.visualization.draw_geometries([FOR, pcd, source_mesh_pointclouds, two_fingers])
 
             z_angle = 86.5
             x_angle = 45
@@ -175,7 +161,6 @@ def read_file(data_path, mesh_path, image_output_path, voxel_size=0.002):
                                     [0, -math.sin(math.pi*(x_angle/180)), math.cos(math.pi*(x_angle/180)), 0], 
                                     [0, 0, 0, 1]])
             final_mat = np.dot(rotation_x, rotation_z)
-            # final_mat = rotation_z
             pcd = pcd.transform(final_mat)
             source_mesh = source_mesh.transform(final_mat)
             two_fingers = two_fingers.transform(final_mat)
@@ -189,8 +174,6 @@ def read_file(data_path, mesh_path, image_output_path, voxel_size=0.002):
         except:
             vis = o3d.visualization.Visualizer()
             vis.create_window(visible=True) #works for me with False, on some systems needs to be true
-        # vis.add_geometry(two_fingers)
-        # vis.update_geometry(two_fingers)
         
         vis.poll_events()
         vis.update_renderer()
@@ -239,8 +222,7 @@ def convert_images_to_video(data_path, video_output_path):
             joint_image[836:836*2, 0:1528] = img
         if direction == '_up':
             joint_image[836:836*2, 1528:1528*2] = img
-    # cv2.imwrite('test.png', joint_image)
-    # return
+
     for i in range(90):
         video.write(joint_image)
 
@@ -291,8 +273,6 @@ def video_speedup(in_path, out_path, source_items_path, grasp_time=11, speedup_r
             sorted_data_path.append(line.strip())
     
     start = [0, convert_to_second(sorted_data_path[0])]
-    # sorted_data_path = sorted(os.listdir(source_items_path))
-    # start = [0, convert_to_second('2022-07-06_14-35-10')]
     re_video = []
     sum_time = 0
     for image in tqdm(sorted_data_path[1:]):
@@ -308,23 +288,19 @@ def video_speedup(in_path, out_path, source_items_path, grasp_time=11, speedup_r
         
         txt_clip_wait = TextClip("10 x speed", fontsize = 95, color = 'red') 
         txt_clip_wait = txt_clip_wait.set_pos((0.68, 0.08), relative=True).set_duration(wait_time/speedup_rate) 
-        # txt_clip_net = TextClip("graspnet.net", fontsize = 95, color = 'black') 
-        # txt_clip_net = txt_clip_net.set_pos((0.34, 0.02), relative=True).set_duration(wait_time/speedup_rate) 
+
         wait_video = CompositeVideoClip([wait_video, txt_clip_wait])
                 
         grasp_video = sub_video.subclip(wait_time, one_grasp_time)
         
         txt_clip_grasp = TextClip("1 x speed", fontsize = 95, color = 'red') 
         txt_clip_grasp = txt_clip_grasp.set_pos((0.68, 0.08), relative=True).set_duration(grasp_time)  
-        # txt_clip_net = TextClip("graspnet.net", fontsize = 95, color = 'black') 
-        # txt_clip_net = txt_clip_net.set_pos((0.34, 0.02), relative=True).set_duration(grasp_time) 
+
         grasp_video = CompositeVideoClip([grasp_video, txt_clip_grasp])
      
-        
         re_video.append(wait_video)
         re_video.append(grasp_video)
-        # preview(sub_video)
-        # preview(grasp_video)
+
         sum_time = sum_time + wait_time/speedup_rate + grasp_time
         start = [end_time, convert_to_second(image)]
     
@@ -351,13 +327,8 @@ def video_speedup(in_path, out_path, source_items_path, grasp_time=11, speedup_r
 def video_speedup2(in_path, video_output_path, source_items_path, grasp_time=11, speedup_rate=3):
     font = cv2.FONT_HERSHEY_SIMPLEX
     video_cap = cv2.VideoCapture(in_path)
-    print(video_cap.isOpened())
     fps = video_cap.get(cv2.CAP_PROP_FPS)
-    # fps = 30.00
-    # error = fps * 27 - int(fps * 27)
-    # error_num = 1 / error
 
-    print('fps: ', fps)
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
     save_video = cv2.VideoWriter(video_output_path, fourcc, fps, (1920, 1080))
 
@@ -374,18 +345,14 @@ def video_speedup2(in_path, video_output_path, source_items_path, grasp_time=11,
     for id, image in enumerate(tqdm(sorted_data_path[1:])):
         one_grasp_time = convert_to_second(image) - start[1]
         total_imges_num = one_grasp_time * fps
-        # if id % 2 == 0:
-        #     total_imges_num = total_imges_num + 1
 
         frame_count = frame_count + total_imges_num
 
         wait_images_num = ((one_grasp_time - grasp_time) / one_grasp_time) * total_imges_num
         grasp_images_num = total_imges_num - wait_images_num
-        # print('wait_images_num: ', wait_images_num, grasp_images_num)
         for i in range(int(total_imges_num)): 
             ret, frame = video_cap.read()
             if i % speedup_rate == 0 and i < wait_images_num:
-                # print('wait_images_num: ', i, wait_images_num)
                 cv2.putText(frame, "10 x speed", (1305, 186), font, 3, (0, 0, 255), 6)
                 cv2.putText(frame, "graspnet.net", (653, 121), font, 3, (0, 0, 0), 6)
                 save_video.write(frame)
@@ -399,8 +366,6 @@ def video_speedup2(in_path, video_output_path, source_items_path, grasp_time=11,
         
 
     for i in range(int(video_cap.get(7) - frame_count)):
-        # if i > 100 :
-        #      break
         ret, frame = video_cap.read()
         if not ret:
             break
@@ -415,10 +380,8 @@ def video_speedup2(in_path, video_output_path, source_items_path, grasp_time=11,
 def video_speedup3(in_path, video_output_path, speedup_rate=10):
     font = cv2.FONT_HERSHEY_SIMPLEX
     video_cap = cv2.VideoCapture(in_path)
-    print(video_cap.isOpened())
     fps = video_cap.get(cv2.CAP_PROP_FPS)
 
-    print('fps: ', fps)
     video_clip_path = '/home/ubuntu/data/hengxu/inspire_grasp_video/graspnet/D415/VID_20211122_163419_clip.mp4'
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
     save_video = cv2.VideoWriter(video_output_path, fourcc, fps, (1920, 1080))
@@ -491,23 +454,6 @@ def get_success_rate_path(path):
     print('success rate: {}, success num: {}, fail num: {}, sum: {}'.format(su[0]/su[2], su[0], su[1], su[2]))
 
 if __name__ == '__main__':
-    # inspire 1 start 2022-07-05_21-38-55 65 end 12
-    # inspire 2 start 2022-07-06_14-35-10 90 end 4 
-    # inspire 3 start 2022-07-09_15-12-43 87 end 14 
-    # data_path = 'D:\\project\\four_fingers\\scripts\\video\\source_items\\modify_score_22_07_05_inspire3'
-    # data_path = '/home/ubuntu/data/hengxu/inspire_grasp_video/point_features/2.txt'
-    # mesh_path = '/home/ubuntu/hengxu/InspireHrandR/minkowski-grasp_inspire_inference/utils/collision_detector_files'
-    # image_output_path = 'D:\\project\\four_fingers\\scripts\\video\\images\\modify_score_22_07_05_inspire2'
-    # video_output_path = 'D:\\project\\four_fingers\\scripts\\video\\videos\\modify_score_22_07_05_inspire3/inspire3_4angle.mp4'
-    # read_file(data_path, mesh_path, image_output_path)
-    
-    # in_path = '/home/ubuntu/data/hengxu/inspire_grasp_video/graspnet/D415/VID_20211122_163419.mp4'
-    # out_path = '/home/ubuntu/data/hengxu/inspire_grasp_video/graspnet/D415_speedup*10/VID_20211122_163419_speedup.mp4'
-    # convert_images_to_video(image_output_path, in_path)
-    # generate_video_time('/home/ubuntu/data/hengxu/InspirehandR_test_data/before_generator/4500/3',
-                            # '/home/ubuntu/data/hengxu/InspirehandR_test_data/before_generator/4500/3.txt')
-    # video_speedup2(in_path, out_path, data_path, grasp_time=11, speedup_rate=10)
-    # video_speedup3(in_path, out_path, speedup_rate=2)
     path = '/home/ubuntu/data/hengxu/data/dh3/dh3_test/obj40'
     path = '/home/ubuntu/data/hengxu/data/inspire/inspire_test_single_point/obj40/test_model0_collision'
     path = '/home/ubuntu/data/hengxu/data/inspire/inspire_test_single_point/obj140/test0'

@@ -4,7 +4,7 @@ import sys
 
 from .src.allegro_hand.src.allegro_hand.controller import AllegroController
 
-# cd /home/ubuntu/data/hengxu/git/universal-grasp/ur_toolbox/ur_toolbox/robot/Allegro/drivers/peak-linux-driver-8.12.0
+# cd ur_toolbox/ur_toolbox/robot/Allegro/drivers/peak-linux-driver-8.12.0
 # make clean
 # make NET=NO_NETDEV_SUPPORT
 # sudo make install
@@ -16,14 +16,12 @@ from .src.allegro_hand.src.allegro_hand.controller import AllegroController
 # ls -l /dev/pcan*
 # sudo apt-get install ros-noetic-libpcan 
 # roslaunch allegro_hand allegro_hand.launch VISUALIZE:=true
+
 class Allegro(object):
     def __init__(self):
         self.allegro_controller = AllegroController()
         self.allegro_ready_pose = np.array([[0, 1.4, 1.4, 1.4], [0, 1.4, 1.4, 1.4], [0, 1.4, 1.4, 1.4], [1.496, 0, 0.2, 0]]).reshape(16)
         time.sleep(0.5)
-        # self.set_ready_pose()
-        # time.sleep(1)
-        # self.set_ready_pose()
 
     def set_torque(self, torque = np.ones(16) * 0.1):
         self.allegro_controller.apply_joint_torque(torque)
@@ -41,7 +39,6 @@ class Allegro(object):
             current_pose = current_pose - error_pose
             self.set_pose(current_pose.reshape(16))
             time.sleep(0.1)
-        # self.set_pose(pose.reshape(16))
         time.sleep(sleep_time)
 
     def get_current_angle(self):
@@ -86,55 +83,3 @@ class Allegro(object):
         target_angle.append(list(close_pose))
         time.sleep(sleep_time)
         
-
-if __name__ == '__main__':
-    import xlrd2
-
-    allegro = Allegro()
-    time.sleep(2)
-    # allegro.set_ready_pose()
-    # allegro.set_torque()
-    path = '/home/ubuntu/data/hengxu/git/MG/minkowski-grasp_inspire_inference/generate_mesh_and_pointcloud/allegro_urdf/meshes/allegro_width_to_angle.xls'
-    wb_6d = xlrd2.open_workbook(path) 
-    pose_id = 12
-    
-    sheet_6d = wb_6d.sheet_by_index(pose_id)
-
-    widths = sheet_6d.col_values(0)[1:]
-    widths = np.array(widths) * 0.1
-
-    thumb0 = sheet_6d.col_values(1)[1:]
-    thumb1 = sheet_6d.col_values(2)[1:]
-    thumb2 = sheet_6d.col_values(3)[1:]
-    thumb3 = sheet_6d.col_values(4)[1:]
-
-    index0 = sheet_6d.col_values(5)[1:]
-    index1 = sheet_6d.col_values(6)[1:]
-    index2 = sheet_6d.col_values(7)[1:]
-    index3 = sheet_6d.col_values(8)[1:]
-
-    middle0 = sheet_6d.col_values(9)[1:] 
-    middle1 = sheet_6d.col_values(10)[1:]
-    middle2 = sheet_6d.col_values(11)[1:]
-    middle3 = sheet_6d.col_values(12)[1:]
-
-    ring0 = sheet_6d.col_values(13)[1:]
-    ring1 = sheet_6d.col_values(14)[1:]
-    ring2 = sheet_6d.col_values(15)[1:]
-    ring3 = sheet_6d.col_values(16)[1:]
-    ids = 40
-    pose = np.array([index0[ids], index1[ids], index2[ids], index3[ids], middle0[ids], middle1[ids], middle2[ids], middle3[ids],
-                            ring0[ids], ring1[ids], ring2[ids], ring3[ids],  thumb0[ids], thumb1[ids], thumb2[ids], thumb3[ids]]).reshape(16)
-    print(pose)
-    
-    allegro.open_gripper(pose)
-    # time.sleep(2)
-    # current = allegro.get_current_angle()
-    # time.sleep(2)
-    # print(current)
-    # allegro.open_gripper(current)
-    # ids = 70
-    # pose = np.array([index0[ids], index1[ids], index2[ids], index3[ids], middle0[ids], middle1[ids], middle2[ids], middle3[ids],
-    #                         ring0[ids], ring1[ids], ring2[ids], ring3[ids],  thumb0[ids], thumb1[ids], thumb2[ids], thumb3[ids]]).reshape(16)
-    # allegro.open_gripper(pose)
-    # print(pose)

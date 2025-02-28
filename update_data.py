@@ -47,7 +47,6 @@ def update_grasp_type(json_path, gripper):
                 information[date][k][2] = information[date][name + '_pose_finger_type']
     for x in remove_item:
         information.pop(x)   
-    # print(information)
     json_file = json.dumps(information, indent=4)
     with open(json_path, 'w') as handle:
         handle.write(json_file)
@@ -69,7 +68,6 @@ def merge_data(in_path, out_path, gripper='Allegro'):
             date_path = os.path.join(grasp_type_path, date, 'information.json')
             with open(date_path, 'r') as f:
                 information = json.load(f)
-            # print(information.keys())
             informations[date] = information
             del information['two_fingers_pose_AD']
             del information['two_fingers_pose_features']

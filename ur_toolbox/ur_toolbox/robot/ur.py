@@ -96,8 +96,6 @@ class UR_Camera_Gripper(urx.Robot):
         self.readyj = np.array(
             [-0.20474416414369756, -1.380301300679342, 0.9994006156921387, -1.1843579451190394, -1.5655363241778772,
              -0.21112090746034795])
-        # self.readyj = np.array([0.6649638414382935, -1.4355509916888636, 1.5572257041931152, -2.7616093794452112, 
-        #                         -1.4952309767352503, -1.3120296637164515])
 
         self.waypointj = np.array(
             [-0.2048280874835413, -1.4410565535174769, 1.33439302444458, -1.4585440794574183, -1.5655601660357874,
@@ -108,7 +106,6 @@ class UR_Camera_Gripper(urx.Robot):
              -0.044919792805806935])
         self.throwj2 = np.array([0.6649638414382935, -1.4355509916888636, 1.5572257041931152, -2.7616093794452112, 
                                 -1.4952309767352503, -1.3120296637164515])
-        # self.ik = ikfastpy.PyKinematics()
 
     def get_camera_tcp_matrix(self):
         '''
@@ -124,16 +121,10 @@ class UR_Camera_Gripper(urx.Robot):
             return np.array([[1, 0, 0, -0.009], [0, 1, 0, -0.05], [0, 0, 1, -0.13], [0, 0, 0, 1]], dtype=np.float32)
         elif self.gripper_type == 'robotiq':
             return np.array([[1, 0, 0, -0.027], [0, 1, 0, -0.075], [0, 0, 1, -0.170], [0, 0, 0, 1]], dtype=np.float32)
-            # return np.array([[1,0,0,-0.025],[0,1,0,-0.070],[0,0,1,-0.217],[0,0,0,1]], dtype = np.float32)
         elif self.gripper_type == 'wsg':
             return np.array([[1, 0, 0, -0.020], [0, 1, 0, -0.083], [0, 0, 1, -0.153], [0, 0, 0, 1]], dtype=np.float32)
-            # return np.array([[1,0,0,-0.016],[0,1,0,-0.073],[0,0,1,-0.153],[0,0,0,1]], dtype = np.float32) wrong
         elif self.gripper_type == 'InspireHandR':
             return np.array([[1, 0, 0, -0.025], [0, 1, 0, -0.07], [0, 0, 1, -0.0406], [0, 0, 0, 1]], dtype=np.float32)
-            # return np.array([[1, 0, 0, -0.025], [0, 1, 0, 0.07], [0, 0, 1, -0.040664], [0, 0, 0, 1]], dtype=np.float32)
-            # return np.array([[1, 0, 0, 0.0475], [0, 1, 0, -0.0475], [0, 0, 1, -0.077], [0, 0, 0, 1]], dtype=np.float32)
-
-            # return np.array([[1, 0, 0, -0.0425], [0, 1, 0, -0.1045], [0, 0, 1, -0.170], [0, 0, 0, 1]], dtype=np.float32)
         elif self.gripper_type == 'DH3':
             return np.array([[1, 0, 0, -0.027], [0, 1, 0, -0.114], [0, 0, 1, 0.0608], [0, 0, 0, 1]], dtype=np.float32)
         elif self.gripper_type == 'Allegro':
@@ -212,13 +203,8 @@ class UR_Camera_Gripper(urx.Robot):
         - np.array of shape (6) of the robot pose in ready state.
         '''
         if self.global_cam:
-            # return np.array(
-            #     [-0.542184448065005, 0.0187573021191121875, 0.4116835280621949, 2.290100059688817, 2.141294337325684,
-            #      -0.000345113451578144], dtype=np.float32)
             return np.array([-0.57084448065005, 0.0067573021191121875, 0.620, 2.290100059688817, 2.141294337325684, -0.000345113451578144], dtype = np.float32)
         else:
-            # if self.gripper_type == 'Allegro':
-            #     return np.array([-0.12054862112463, -0.10445596222486803, 0.6268067039165737, -1.9977519340893304, -1.820554858293943, 0.5911084476476999], dtype=np.float32)
             return np.array([-0.299333228670771, 0.0022835537920474144, 0.603633972814212, 2.2151031430447197, 2.2263986774485334, 0.00013764345054940088], dtype=np.float32)
 
     def search_pose(self, num=0):
@@ -257,10 +243,6 @@ class UR_Camera_Gripper(urx.Robot):
                 [-0.410796973800367, -0.5401806313280444, 0.22974717091039015, 1.202156341186167, 2.8652524529413563,
                  -0.16828893640775433], dtype=np.float32)
         else:
-            # return np.array(
-            #     [-0.3204891342444824, -0.4132964824407238, 0.44397890768936943, 1.6707580689413135, 1.7777410058085954,
-            #      -0.49138379844066904], dtype=np.float32)
-            # return np.array([-0.3204891342444824, 0.5532964824407238, 0.60397890768936943, 2.2151031430447197, 2.2263986774485334, 0.013764345054940088], dtype = np.float32)
             return np.array([-0.3204891342444824, 0.0, 0.60397890768936943, 2.2151031430447197, 2.2263986774485334, 0.013764345054940088], dtype = np.float32)
 
     def throw(self, acc=0.05, vel=0.05):
@@ -348,7 +330,6 @@ class UR_Camera_Gripper(urx.Robot):
         tcp_final_pose = copy.deepcopy(tcp_pose)
         tcp_final_pose[:3, 3] = tcp_final_pose[:3, 3] + approach_dist / 3 * tcp_final_pose[:3, 2]
         self.movel(tcp_pre_pose, acc=acc, vel=vel)
-        # self.movel(tcp_final_pose, acc = acc, vel = vel)
         self.movel(tcp_pose, acc=acc, vel=vel)
 
     def grasp_and_throw(self, multifinger_grasp_used, two_fingers_grasp_used, cloud, multifinger_mesh_json_path, acc=0.05, vel=0.05, approach_dist=0.07, camera_pose=True,
@@ -418,14 +399,12 @@ ss        **Output:**
                 self.close_gripper(close_joint, multifinger_grasp_used, close_torque)
             else:
                 self.close_gripper()
-            # self.close_gripper(sleep_time=gripper_time)
             tcp_pre_pre_pose = copy.deepcopy(tcp_pose)
             tcp_pre_pre_pose[:3, 3] = tcp_pre_pre_pose[:3, 3] - 0.004 * target_gripper_pose
             self.movel(tcp_pre_pre_pose, acc=acc, vel=vel)
             time.sleep(0.1)
             self.movel(tcp_pre_pose, acc=acc, vel=vel)
             self.throw(acc=acc, vel=vel)
-            # self.movel(self.ready_pose(), acc=acc * 4, vel=vel * 5.5)
             self.open_gripper(multifinger_grasp_used.angle, sleep_time=gripper_time)
             if self.gripper_type == 'Allegro':
                 self.set_torque(np.zeros(16))

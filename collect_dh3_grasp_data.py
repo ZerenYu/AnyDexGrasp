@@ -60,7 +60,6 @@ def parse_preds(end_points, use_v2=False):
     coords = end_points['sinput'].C  # (\Sigma Ni, 4)
     objectness_pred = end_points['stage1_objectness_pred']  # (Sigma Ni, 2)
     objectness_mask = torch.argmax(objectness_pred, dim=1).bool()  # (\Sigma Ni,)
-    # objectness_mask = (objectness_pred[:,1]>-1)
     seed_xyz = end_points['stage2_seed_xyz']  # (B, Ns, 3)
     seed_inds = end_points['stage2_seed_inds']  # (B, Ns)
     grasp_view_xyz = end_points['stage2_view_xyz']  # (B, Ns, 3)
@@ -78,13 +77,11 @@ def parse_preds(end_points, use_v2=False):
         
         cloud_mask_i = (coords[:, 0] == i)
         seed_inds_i = seed_inds[i]
-        # print('seed_inds_i: ', seed_inds_i.shape, seed_inds_i)
         objectness_mask_i = objectness_mask[cloud_mask_i][seed_inds_i]  # (Ns,)
 
         if objectness_mask_i.any() == False:
             continue
 
-        ## remove background
         seed_xyz_i = seed_xyz[i] # [objectness_mask_i]  # (Ns', 3)
         point_features_i = point_features[i] # [objectness_mask_i]
         
@@ -93,7 +90,6 @@ def parse_preds(end_points, use_v2=False):
         grasp_view_xyz_i = grasp_view_xyz[i] # [objectness_mask_i]  # (Ns', 3)
         grasp_view_inds_i = grasp_view_inds[i] # [objectness_mask_i]
         grasp_view_scores_i = grasp_view_scores[i] # [objectness_mask_i]
-        # print('shape: ', grasp_view_inds_i.shape, grasp_view_scores.shape, grasp_view_xyz_i.shape)
         grasp_scores_i = grasp_scores[i] # [objectness_mask_i]  # (Ns', A, D)
         grasp_widths_i = grasp_widths[i] # [objectness_mask_i] # (Ns', A, D)
         
@@ -151,7 +147,6 @@ def get_net(checkpoint_path, use_v2=False):
 def flip_ggarray(ggarray):
     ggarray_rotations = ggarray[:, 4:13].reshape((-1, 3, 3))
     tcp_x_axis_on_base_frame = ggarray_rotations[:, 1, 1]
-    # normal_vector = np.array((- 1 / 2, np.sqrt(3) / 2, 0))
     if_flip = [False for _ in range(len(ggarray))]
     for ids, y_x in enumerate(tcp_x_axis_on_base_frame):
         if y_x > 0:
@@ -194,7 +189,6 @@ def save_grasp_information(two_fingers_ggarray, two_fingers_ggarray_object_ids, 
                             mat_pose, colors_saved, depths_saved, grasp_features, two_fingers_source_grasp_features,
                             before_collision, after_collision):
     save_path = cfgs.save_information_path
-    # save_path = '/home/ubuntu/data/hengxu/DH3_test_data/test'
 
     timeStamp = datetime.datetime.now().timestamp()
     timeArray = time.localtime(timeStamp)
@@ -241,10 +235,8 @@ def save_grasp_information(two_fingers_ggarray, two_fingers_ggarray_object_ids, 
     
     information['point_id'] = grasp_features_used['point_id']
     information['if_flip'] = grasp_features_used['if_flip']
-    # print(information['if_flip'], type(information['if_flip']))
     information['DH3_pose_finger_type'] = int(DH3_grasp_used.grasp_type + 0.1)
     information['DH3_pose_depth_type'] = int(DH3_grasp_used.depth*100 + 0.1) - grasp_features_used['grasp_depths']
-    # information['grasp_features'] = grasp_features_used
     information['before_collision'] = before_collision
     information['after_collision'] = after_collision
     information['base_2_tcp1'] = np.array(mat_pose[0]).tolist()
@@ -299,20 +291,9 @@ def save_grasp_information(two_fingers_ggarray, two_fingers_ggarray_object_ids, 
     print('Saved successfully')
 
 def get_grasp(net, depths, existing_shm_color, voxel_size=0.005):
-    # fx, fy = 908.435, 908.679
-    # cx, cy = 650.366, 367.277
-    # s = 1000.0
-    # D415, id=104122064489
-    # fx, fy = 912.898, 912.258
-    # cx, cy = 629.536, 351.637
     s = 1000.0
     fx, fy = 919.835, 919.61
     cx, cy = 631.119, 363.884
-    # s = 1000.0
-    # D415, id=104122062823
-    # fx, fy = 913.232, 912.452
-    # cx, cy = 628.847, 350.771
-    # s = 1000.0
 
     xmap, ymap = np.arange(depths.shape[1]), np.arange(depths.shape[0])
     xmap, ymap = np.meshgrid(xmap, ymap)
@@ -320,22 +301,13 @@ def get_grasp(net, depths, existing_shm_color, voxel_size=0.005):
     points_z = depths / s
     points_x = (xmap - cx) / fx * points_z
     points_y = (ymap - cy) / fy * points_z
-    # mask = (points_z > 0.45) & (points_z < 0.88) & (points_x > -0.21) & (points_x < 0.21) & (points_y > -0.08) & (points_y < 0.2)
 
-    mask = (points_z > 0.15) & (points_z < 0.72) #2023.03.04.19.05
-    # mask[:] = True
+    mask = (points_z > 0.15) & (points_z < 0.72) 
     points = np.stack([points_x, points_y, points_z], axis=-1)
     points = points[mask].astype(np.float32)
 
-    # print(points[:, 0].max(), points[:, 0].min())
-    # print(points[:, 1].max(), points[:, 1].min())
     if DEBUG:
         colors = np.copy(np.ndarray((720, 1280, 3), dtype=np.float32, buffer=existing_shm_color.buf))
-        # plt.subplot(2, 1, 1)
-        # plt.imshow(colors)
-        # plt.subplot(2, 1, 2)
-        # plt.imshow(depths)
-        # plt.show()
         colors = colors[mask].astype(np.float32)
 
     cloud = None
@@ -366,14 +338,10 @@ def get_grasp(net, depths, existing_shm_color, voxel_size=0.005):
             preds = preds[0]
     # filter
     mask = (preds[:,9] > 0.9) & (preds[:,1] < MAX_GRASP_WIDTH) & (preds[:,1] > MIN_GRASP_WIDTH)
-    # workspace_mask = (preds[:,12] > -0.2) & (preds[:,12] < 0.2) & (preds[:,13] > -0.25) & (preds[:,13] < 0.1) 2022.11.23.15.05
-    # workspace_mask = (preds[:,12] > -0.15) & (preds[:,12] < 0.25) & (preds[:,13] > -0.205) & (preds[:,13] < 0.08)
     workspace_mask = (preds[:,12] > -0.25) & (preds[:,12] < 0.25) & (preds[:,13] > -0.205) & (preds[:,13] < 0.03)
-    # workspace_mask = (preds[:,12] > -0.21) & (preds[:,12] < 0.21) & (preds[:,13] > -0.02) & (preds[:,13] < 0.19) & (preds[:,14] > 0.45) & (preds[:,14] < 0.88) 
 
     preds = preds[workspace_mask & mask]
     grasp_features = grasp_features[0][workspace_mask & mask]
-    # print('111preds grasp features: ', preds.size(), grasp_features.size())
     if len(preds) == 0:
         print('No grasp detected after masking')
         return None, cloud, points.cuda(), None
@@ -398,8 +366,8 @@ def load_meshes_pointcloud(path):
     return meshes_pcls
 
 def robot_grasp(cfgs):
-    robot = get_robot(cfgs.robot_ip, robot_debug=True, gripper_type='DH3', global_cam=cfgs.global_camera)
     net = get_net(cfgs.checkpoint_path, use_v2=cfgs.use_graspnet_v2)
+    robot = get_robot(cfgs.robot_ip, robot_debug=True, gripper_type='DH3', global_cam=cfgs.global_camera)
     fail = 0
     existing_shm_color = shared_memory.SharedMemory(name='realsense_color')
     existing_shm_depth = shared_memory.SharedMemory(name='realsense_depth')
@@ -460,7 +428,6 @@ def robot_grasp(cfgs):
             ggarray = ggarray.cpu().numpy()
             source_index = ggarray[:, 0].argsort()
             ggarray = ggarray[source_index][::-1][:500]
-            # print(ggarray[:, 0].argsort())
 
             # Prevent the robot arm from crossing the border, 
             ggarray, if_flip = flip_ggarray(ggarray)
@@ -469,8 +436,7 @@ def robot_grasp(cfgs):
             two_fingers_source_grasp_features = copy.deepcopy(grasp_features)
             grasp_features = grasp_features[source_index][::-1][:500]
             grasp_features = np.c_[grasp_features, if_flip]
-            # grasp_informations = copy.deepcopy(grasp_features)
-            # grasp_features = get_grasp_features(grasp_features)
+
             assert cfgs.grasp_type >=1 and cfgs.grasp_type <= 4
             DH3_types = np.random.randint(cfgs.grasp_type, cfgs.grasp_type + 1, (len(ggarray),))
             DH3_depths = (np.random.randint(0, 4, (len(ggarray),))) * 0.01
@@ -487,12 +453,10 @@ def robot_grasp(cfgs):
             DH3_ggarray_source = copy.deepcopy(DH3_ggarray)
 
             two_fingers_ggarray_object_ids = two_fingers_ggarray_object_ids_source
-            # import pdb
-            # pdb.set_trace()
+
             before_collision = [copy.deepcopy(np.array(DH3_ggarray.grasp_group_array).tolist()), 
                                 copy.deepcopy(np.array(two_fingers_ggarray.grasp_group_array).tolist()),
                                 copy.deepcopy(np.array(grasp_features).tolist())]
-            # print('ggarray object_id2: ', len(two_fingers_ggarray), two_fingers_ggarray_object_ids.shape)
             if len(DH3_ggarray) == 0:
                 print('No grasp detected after filter')
                 if cfgs.global_camera:
@@ -509,8 +473,6 @@ def robot_grasp(cfgs):
                                                                   cfgs.dh3_mesh_json_path, meshes_pcls, min_grasp_width=MIN_GRASP_WIDTH,
                                                                   VoxelGrid=DH3_VOXElGRID, DEBUG=False, approach_dist=approach_distance,
                                                                   collision_thresh=2, adjust_gripper_centers=False)
-            print('collision time: ', time.time()-start_time)
-            print('ggarray object_id2: ', len(two_fingers_ggarray), two_fingers_ggarray_object_ids.shape)
 
             # proposals
             DH3_ggarray = DH3_ggarray[empty_mask]
@@ -521,8 +483,6 @@ def robot_grasp(cfgs):
             after_collision = [copy.deepcopy(np.array(DH3_ggarray.grasp_group_array).tolist()), 
                                 copy.deepcopy(np.array(two_fingers_ggarray.grasp_group_array).tolist()),
                                 copy.deepcopy(np.array(grasp_features).tolist())]
-
-            print('\n\nafter collision num *********', len(DH3_ggarray), len(two_fingers_ggarray), len(two_fingers_ggarray_object_ids))
 
             if len(DH3_ggarray) == 0:
                 print('No Grasp detected after collision detection!')
@@ -565,12 +525,7 @@ def robot_grasp(cfgs):
             print('grasp depth:', DH3_grasp_used.depth, two_fingers_grasp_used.depth)
             print('grasp type:', DH3_grasp_used.grasp_type)
             print('grasp angle:', DH3_grasp_used.angle)
-            # if CALIB:
-            #     robot.gripper_action(robot.get_gripper_position(0), 255,50)
-            # else:
-            #     robot.gripper_action(robot.get_gripper_position(g.width*1000), 255,50)
-            t4 = time.time()
-            print(f'Collision Processing Time:{t4 - t3}')
+
             ####################################
             if DEBUG:
                 DH3_pose = DH3_grasp_used.load_mesh(cfgs.dh3_mesh_json_path, two_fingers_grasp_used)
@@ -586,11 +541,9 @@ def robot_grasp(cfgs):
                 ps = scene_cloud.points
                 ps = o3d.utility.Vector3dVector(ps)
                 output = voxel_grid.check_if_included(ps)
-                print('\n\n\nnp.array(output).astype(int).sum(): ', np.array(output).astype(int).sum(), '\n\n\n')
                 o3d.visualization.draw_geometries(
                     [DH3_pose, cloud, sphere, frame, two_fingers_grasp_used.to_open3d_geometry()])
             gripper_time = 0.9
-            print('angle: ', DH3_grasp_used.angle)
             robot.open_gripper(DH3_grasp_used.angle)
             mat_pose = robot.grasp_and_throw(DH3_grasp_used, two_fingers_grasp_used, cloud, '',
                                              acc=a*2, vel=v*3, approach_dist=approach_distance,
@@ -622,7 +575,6 @@ def robot_grasp(cfgs):
             print(f'\033[1;31mMPPH:{mpph}\033[0m\n--------------------')
     finally:
         robot.close()
-        # print('save')
         existing_shm_depth.close()
         if DEBUG:
             existing_shm_color.close()

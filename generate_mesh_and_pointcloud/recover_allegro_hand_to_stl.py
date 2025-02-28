@@ -36,47 +36,6 @@ joint_mesh_mapping = {"base": "base_link.STL",
                       "18": "link_15.0.STL",
                       "19": "link_15.0_tip.STL",}
 
-# grasp_types = {'1':{'name': 'Large_Diameter',          'facenet_thumb': [[22524, 2]], 'facenet_index': [[7342, 2], [11614, 2]], 'width':[0, 0.12],
-#                     'close_pose_matrix': np.array([[0, 1.4, 0.6, 0.5], [0, 1.4, 0.6, 0.5], [0, 1.4, 0.6, 0.5], [1.496, 0, 0.75, 0.5]]),
-#                     'close_pose_torque': np.array([[0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 1, 1], [0, 0, 1, 1]])},
-#                 '2':{'name': 'Small_Diameter',         'facenet_thumb': [[22524, 0]], 'facenet_index': [[11609, 1], [11620, 1]], 'width':[0, 0.12],
-#                     'close_pose_matrix': np.array([[0.3, 1.4, 0.7, 0.6], [0.3, 1.4, 0.7, 0.6], [0.3, 1.4, 0.7, 0.6], [1.196, 0.6, 0.8, 0.5]]),
-#                     'close_pose_torque': np.array([[0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 1, 1]])},
-#                 '3':{'name': 'Ring',                   'facenet_thumb': [[22524, 2]], 'facenet_index': [[7337, 0], [7348, 0]], 'width':[0, 0.12],
-#                     'close_pose_matrix': np.array([[0, 1.2, 0.75, 0.7], [0, 1.4, 1.4, 1.4], [0, 1.4, 1.4, 1.4], [1.365, 0., 0.55, 0.55]]),
-#                     'close_pose_torque': np.array([[0, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 1, 1]])},
-#                 '4':{'name': 'Sphere_3_Finger',        'facenet_thumb': [[22524, 2]], 'facenet_index': [[11609, 1], [11620, 1]], 'width':[0.014, 0.12],
-#                     'close_pose_matrix': np.array([[-0.2, 1.1, 1.2, 0.8], [-0.1, 1.1, 1.2, 0.8], [0, 1.2, 1.2, 1.2], [1.2, 1.0, 0.5, 1.2]]),
-#                     'close_pose_torque': np.array([[0, 1, 1, 1], [0, 1, 1, 1], [0, 0, 0, 0], [0, 0, 1, 1]])},
-#                 '5':{'name': 'Distal_Type',            'facenet_thumb': [[22524, 0]], 'facenet_index': [[11614, 2], [15887, 2]], 'width':[0, 0.12],
-#                     'close_pose_matrix': np.array([[0, 0, 0, 0], [0.3, 1.05, 0.85, 0.7], [0.3, 1.05, 0.85, 0.7], [1.3, 0.5, 1.0, 0.3]]),
-#                     'close_pose_torque': np.array([[0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 1, 1], [0, 0, 1, 1]])},
-#                 '6':{'name': 'Adduction_Grip',         'facenet_thumb': [[7342, 2]],  'facenet_index': [[11609, 2], [7320, 1], [11536, 0]], 'width':[0, 0.078],
-#                     'close_pose_matrix': np.array([[-0.46, 0.196, 0.174, 0.227], [0.46, 0.196, 0.174, 0.227], [0.4, 1.3, 0.95, 0.85], [1, 1, 1.5, 0.5]]),
-#                     'close_pose_torque': np.array([[-1, 0, 0, 0], [1, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]])},
-#                 # '6':{'name': 'Prismatic_2_Finger',     'facenet_thumb': [[22428, 1]], 'facenet_index': [[4426, 1], [11694, 2]], 'width':[0.01, 0.12],
-#                 #     'close_pose_matrix': np.array([[0.4, 0.9, 0.4, 0.6], [0.46, 1.4, 0.7, 0.3], [0.46, 1.6, 0.8, 0.7], [0.5, 0.5, 1.4, 0.1]]),
-#                 #     'close_pose_torque': np.array([[0, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 1, 1]])},
-#                 # '7':{'name': 'Prismatic_3_Finger',    'facenet_thumb': [[22428, 1]], 'facenet_index': [[4426, 1], [15992, 0]], 'width':[0.032, 0.12],
-#                 #     'close_pose_matrix': np.array([[0.26, 0.95, 0, 1], [0.25, 0.95, 0, 1], [0.45, 1.1, 0.7, 0.3], [0.7, 0.5, 1.15, 0.5]]),
-#                 #     'close_pose_torque': np.array([[0, 1, 1, 1], [0, 1, 1, 1], [0, 0, 0, 0], [0, 0, 1, 1]])},
-#                 '7':{'name': 'Writing_Tripod',         'facenet_thumb': [[22563, 2]], 'facenet_index': [[7337, 0], [7348, 0]], 'width':[0, 0.12],
-#                     'close_pose_matrix': np.array([[-0.25, 1.1, 0.7, 0.7], [0, 1.3, 0.75, 0.75], [0.2, 1.3, 0.75, 0.75], [1.2, 0.45, 0.75, 0.65]]),
-#                     'close_pose_torque': np.array([[0, 1, 1, 1], [0, 1, 1, 1], [0, 1, 1, 1], [0, 0, 1, 1]])},
-#                 '8':{'name': 'Tripod',                 'facenet_thumb': [[22428, 2]], 'facenet_index': [[7342, 2], [11614, 2]], 'width':[0.01, 0.12],
-#                     'close_pose_matrix': np.array([[-0.05, 1.15, 0.65, 0.65], [0.26, 1, 0.75, 0.75], [0, 1.6, 1.6, 1.6], [1.25, 0.2, 0.75, 0.65]]),
-#                     'close_pose_torque': np.array([[0, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 1, 1, 1]])},
-#                 '9':{'name': 'Lateral',                'facenet_thumb': [[22615, 1]], 'facenet_index': [[5729, 1], [5729, 0]], 'width':[0, 0.12],
-#                     'close_pose_matrix': np.array([[0.46, 1.7, 1.05, 0.8], [0.46, 1.7, 1.05, 0.8], [0.46, 1.7, 0.85, 0.8], [0.3, 0.4, 1.05, 0.8]]),
-#                     'close_pose_torque': np.array([[-1, 0, 0, 0], [-1, 0, 0, 0], [-1, 0, 0, 0], [0, 0, 1, 1]])},
-#                 # '11':{'name': 'Stick',                  'facenet_thumb': [[22615, 1]], 'facenet_index': [[4426, 0], [4426, 1]], 'width':[0, 0.12],
-#                 #     'close_pose_matrix': np.array([[0.45, 1.1, 0.5, 0.5], [0.3, 1.6, 1.6, 1.6], [0.3, 1.6, 1.6, 1.6], [0.3, 0.4, 1.3, 0.7]]),
-#                 #     'close_pose_torque': np.array([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 1, 1]])},
-#                 '10':{'name': 'Prismatic_2_Finger',        'facenet_thumb': [[22524, 2]], 'facenet_index': [[7342, 2], [11614, 2]], 'width':[0, 0.12],
-#                     'close_pose_matrix': np.array([[0, 1.4, 0.6, 0.5], [0, 1.4, 0.6, 0.5], [0, 1.4, 1.4, 1.4], [1.496, 0, 0.75, 0.5]]),
-#                     'close_pose_torque': np.array([[0, 1, 1, 1], [0, 1, 1, 1], [0, 0, 0, 0], [0, 0, 1, 1]])},
-#                 }
-
 
 def four_meta_to_matrix(x):
     xyz = [x[0], x[1], x[2]]
@@ -90,13 +49,9 @@ def four_meta_to_matrix(x):
 
 def read_excel_2D_angle_to_12D_angle(path_16d, vis):
     angles = [[] for _ in range(len(grasp_types))]
-    # pos_scope = [(-1.08, 0.43), (1.333, 0.), (0.06, 0.01), (0.1, 0),
-    #             (1, 1),          (1.333, 0.), (0.06, 0.01), (0.1, 0),
-    #             (1.08, -0.43), (1.333, 0.), (0.06, 0.01), (0.1, 0)] 
+
     wb_6d = xlrd2.open_workbook(path_16d) 
     for pose_id in range(len(grasp_types)):
-        # if (pose_id != 12 and vis):
-        #     continue
         sheet_6d = wb_6d.sheet_by_index(pose_id)
 
         widths = sheet_6d.col_values(0)[1:]
@@ -122,11 +77,6 @@ def read_excel_2D_angle_to_12D_angle(path_16d, vis):
         ring2 = sheet_6d.col_values(15)[1:]
         ring3 = sheet_6d.col_values(16)[1:]
         for ids, _ in enumerate(widths):
-            # print(index0[ids])
-            # if (ids not in [0, 30, 40, 50, 60, 90, 119]) and vis:
-            #     continue
-            # if ids > 30 or ids < 30:
-            #     continue
             if thumb0[ids] == -1:
                 continue
             angles[pose_id].append([index0[ids], index1[ids], index2[ids], index3[ids], 0, middle0[ids], middle1[ids], middle2[ids], middle3[ids], 0,
@@ -174,11 +124,6 @@ def save_stl_and_pointcloud(name, angle, mesh, output_path):
     pcd = o3.geometry.TriangleMesh.sample_points_uniformly(mesh, 300000)
     pcd.estimate_normals(search_param=o3.geometry.KDTreeSearchParamHybrid(radius=0.01, max_nn=30))
     points = np.array(pcd.points)
-    # for i in range(1, 10):
-    #     points = np.vstack((points, np.array(pcd.points) - np.array(pcd.normals) * i * 1.5 * 0.0005)) # 2023.03.09
-    # for i in range(6, 16):
-    #     points = np.vstack(
-    #         (points, np.array(pcd.points)[:170000 * 1] - np.array(pcd.normals)[:22730 * 1] * i * 1.5 * 0.0005))
     pcd_extend = o3.geometry.PointCloud()
     pcd_extend.points = o3.utility.Vector3dVector(points)
     for i in range(1, 6):
@@ -196,7 +141,6 @@ def get_meshes(angles, stl_path, output_path, width_16D_angle_json, urdf_path, v
         print(grasp_type)
         for ids in tqdm([i for i in range(len(angle8))]):
             angle = angle8[ids]
-            # print(angle)
             width = np.round(angle[-1], 1)
 
             path_file = stl_path + joint_mesh_mapping['base']
@@ -252,7 +196,7 @@ def generate_one_stl(urdf_path, stl_path, save_stl_path):
     pose = [[] for _ in range(num_mesh)]
     for joint_id in range(num_mesh):
         ag = 0
-        if joint_id == 15: # [0.263, 1.396]
+        if joint_id == 15: 
             ag = 1.396
         p.resetJointState(hand, joint_id, ag)
     
@@ -276,7 +220,6 @@ if __name__ == '__main__':
     json_path = './generate_mesh_and_pointcloud/allegro_urdf/width_16D_angle.json'
 
     urdf_path = './generate_mesh_and_pointcloud/allegro_urdf/allegro_hand_description/urdf/allegro_hand_description_right.urdf'
-    # generate_one_stl(urdf_path, source_stl_path, './test.stl')
     vis = False
     angles = read_excel_2D_angle_to_12D_angle(path_16d, vis=vis)
     get_meshes(angles, source_stl_path, output_path, json_path, urdf_path, vis=vis)

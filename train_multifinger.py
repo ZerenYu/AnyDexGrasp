@@ -59,17 +59,9 @@ BASE_LEARNING_RATE = FLAGS.learning_rate
 GRIPPER_TYPE = FLAGS.gripper_type
 MULTIFINGER_TYPE = FLAGS.train_multifinger_type
 WEIGHT_DECAY = FLAGS.weight_decay
-# BN_DECAY_STEP = FLAGS.bn_decay_step
-# BN_DECAY_RATE = FLAGS.bn_decay_rate
-# LR_DECAY_STEPS = [int(x) for x in FLAGS.lr_decay_steps.split(',')]
-# LR_DECAY_RATES = [float(x) for x in FLAGS.lr_decay_rates.split(',')]
-# assert(len(LR_DECAY_STEPS)==len(LR_DECAY_RATES))
+
 LOG_DIR = FLAGS.log_dir
 
-# if GRIPPER_TYPE == 'Inspire':
-#     num_type = 4
-# elif GRIPPER_TYPE == 'DH3':
-#     num_type = 4
 
 # Prepare LOG_DIR and DUMP_DIR
 if os.path.exists(LOG_DIR) and FLAGS.overwrite:
@@ -178,7 +170,6 @@ def train_one_epoch():
     every_indicator_detachs = []
     for batch_idx, batch_data_label in enumerate(TRAIN_DATALOADER):
         batch_data_label = convert_data_to_gpu(batch_data_label)
-        # print(batch_data_label["result"].shape[0])
         if batch_data_label["result"].shape[0] == 1:
             continue
         weights.append(batch_data_label["result"].shape[0])
@@ -191,20 +182,13 @@ def train_one_epoch():
         end_points["two_fingers_pose_depth_type"] = batch_data_label["two_fingers_pose_depth_type"]
         end_points["multifinger_pose_finger_type"] = batch_data_label["multifinger_pose_finger_type"]
         end_points["multifinger_pose_depth_type"] = batch_data_label["multifinger_pose_depth_type"] 
-        # end_points["two_fingers_pose"] = batch_data_label["two_fingers_pose"]
 
-        # end_points["AD_scores"] = batch_data_label["AD_scores"]
         end_points["grasp_preds_features"] = batch_data_label['grasp_preds_features']
-        # end_points["bin_features"] = batch_data_label['bin_features']
-        # end_points["before_generator"] = batch_data_label["before_generator"]
-        # end_points["point_features"] = batch_data_label['point_features']
         end_points["if_flip"] = batch_data_label['if_flip']
 
         grasp_preds, end_points = multifinger_net(end_points)
-        
-        # end_points["if_collision"] = batch_data_label["if_collision"]       
+    
         end_points["result"] = batch_data_label["result"]
-        # print(grasp_preds.shape)
         loss, indicator, every_indicator = criterion(end_points)
         indicator_detach = []
         for item in indicator:
@@ -221,9 +205,7 @@ def train_one_epoch():
                 gripper_types.append(accs)
             every_indicator_detach.append(gripper_types)
         every_indicator_detachs.append(every_indicator_detach)
-        # pres.append(indicator[0].detach().item())
-        # recalls.append(indicator[1].detach().item())
-        # f1s.append(indicator[2].detach().item())
+
         loss.backward()
         all_losses.append(loss.item())
         optimizer.step()
@@ -244,8 +226,7 @@ def train_one_epoch():
     mean_loss = np.sum(weights * np.array(all_losses))
     mean_indicators = np.sum(weights.reshape((-1,1)) * np.array(indicator_detachs), axis=0)
     mean_every_indicators = np.sum(weights.reshape((-1,1,1,1)) * np.array(every_indicator_detachs), axis=0)
-    # import pdb
-    # pdb.set_trace()
+
     log_string("===== {} =====".format(MULTIFINGER_TYPE))
     log_string("Mean Train loss:{}".format(mean_loss))
     log_string("Mean Train @0.5 precision:{}, recall:{}, f1:{}".format(mean_indicators[0], mean_indicators[1], mean_indicators[2]))
@@ -258,15 +239,7 @@ def train_one_epoch():
     log_string("===== =====")
     TRAIN_WRITER.add_scalar("train/loss", mean_loss, EPOCH_CNT)
     TRAIN_WRITER.add_scalar("leraning rate", lr_scheduler.get_last_lr()[0], EPOCH_CNT)
-    # TRAIN_WRITER.add_scalar("train/precision", {'precision 0.5': mean_indicators[0],
-    #                                             'precision 0.7': mean_indicators[3],
-    #                                             'precision 0.9': mean_indicators[6]}, EPOCH_CNT)
-    # TRAIN_WRITER.add_scalar("train/recall", {'recall 0.5': mean_indicators[1],
-    #                                          'recall 0.7': mean_indicators[4],
-    #                                          'recall 0.9': mean_indicators[7]}, EPOCH_CNT)
-    # TRAIN_WRITER.add_scalar("train/f1", {'f1 0.5': mean_indicators[2],
-    #                                      'f1 0.7': mean_indicators[5],
-    #                                      'f1 0.9': mean_indicators[8]}, EPOCH_CNT)
+
     TRAIN_WRITER.add_scalar("train/precision_0.5", mean_indicators[0], EPOCH_CNT)
     TRAIN_WRITER.add_scalar("train/recall_0.5", mean_indicators[1], EPOCH_CNT)
     TRAIN_WRITER.add_scalar("train/f1_0.5", mean_indicators[2], EPOCH_CNT)
@@ -308,20 +281,13 @@ def eval_one_epoch():
         end_points["two_fingers_pose_depth_type"] = batch_data_label["two_fingers_pose_depth_type"]
         end_points["multifinger_pose_finger_type"] = batch_data_label["multifinger_pose_finger_type"]
         end_points["multifinger_pose_depth_type"] = batch_data_label["multifinger_pose_depth_type"] 
-        # end_points["two_fingers_pose"] = batch_data_label["two_fingers_pose"]
 
-        # end_points["AD_scores"] = batch_data_label["AD_scores"]
         end_points["grasp_preds_features"] = batch_data_label['grasp_preds_features']
-        # end_points["bin_features"] = batch_data_label['bin_features']
-        # end_points["before_generator"] = batch_data_label["before_generator"]
-        # end_points["point_features"] = batch_data_label['point_features']
         end_points["if_flip"] = batch_data_label['if_flip']
 
         grasp_preds, end_points = multifinger_net(end_points)
-        
-        # end_points["if_collision"] = batch_data_label["if_collision"]        
+     
         end_points["result"] = batch_data_label["result"]
-        # print(grasp_preds.shape)
         loss, indicator, every_indicator = criterion(end_points)
         indicator_detach = []
         for item in indicator:
@@ -340,10 +306,7 @@ def eval_one_epoch():
         every_indicator_detachs.append(every_indicator_detach)
 
         all_losses.append(loss.item())
-        # pres.append(indicator[0].detach().item())
-        # recalls.append(indicator[1].detach().item())
-        # f1s.append(indicator[2].detach().item())
-        # log_string("loss:{}".format(loss))
+
     weights = np.array(weights)
     weights = weights / np.sum(weights)
     mean_loss = np.sum(weights * np.array(all_losses))
@@ -352,7 +315,6 @@ def eval_one_epoch():
 
     log_string("===== {} =====".format(MULTIFINGER_TYPE))
     log_string("Mean Test loss:{}".format(mean_loss))
-    # log_string("Mean Test precision:{}, recall:{}, f1:{}".format(mean_indicators[0], mean_indicators[1], mean_indicators[2]))
     log_string("Mean Test @0.5 precision:{}, recall:{}, f1:{}".format(mean_indicators[0], mean_indicators[1], mean_indicators[2]))
     log_string("Mean Test @0.7 precision:{}, recall:{}, f1:{}".format(mean_indicators[3], mean_indicators[4], mean_indicators[5]))
     log_string("Mean Test @0.9 precision:{}, recall:{}, f1:{}".format(mean_indicators[6], mean_indicators[7], mean_indicators[8]))
@@ -362,15 +324,7 @@ def eval_one_epoch():
             mean_every_indicators[2][mt][1], mean_every_indicators[2][mt][2], mean_every_indicators[2][mt][3]))
     log_string("===== =====")
     TEST_WRITER.add_scalar("test/loss", mean_loss, EPOCH_CNT)
-    # TEST_WRITER.add_scalar("test/precision", {'precision 0.5': mean_indicators[0],
-    #                                             'precision 0.7': mean_indicators[3],
-    #                                             'precision 0.9': mean_indicators[6]}, EPOCH_CNT)
-    # TEST_WRITER.add_scalar("test/recall", {'recall 0.5': mean_indicators[1],
-    #                                          'recall 0.7': mean_indicators[4],
-    #                                          'recall 0.9': mean_indicators[7]}, EPOCH_CNT)
-    # TEST_WRITER.add_scalar("test/f1", {'f1 0.5': mean_indicators[2],
-    #                                      'f1 0.7': mean_indicators[5],
-    #                                      'f1 0.9': mean_indicators[8]}, EPOCH_CNT)
+ 
     TEST_WRITER.add_scalar("test/precision_0.5", mean_indicators[0], EPOCH_CNT)
     TEST_WRITER.add_scalar("test/recall_0.5", mean_indicators[1], EPOCH_CNT)
     TEST_WRITER.add_scalar("test/f1_0.5", mean_indicators[2], EPOCH_CNT)

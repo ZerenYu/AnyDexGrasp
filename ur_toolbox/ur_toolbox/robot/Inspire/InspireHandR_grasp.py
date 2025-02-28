@@ -10,13 +10,9 @@ grasp_types = { '1':{'name': 'Ring', 'facenet_thumb': [[207598, 207599]], 'facen
                 '3':{'name': 'Prismatic_3_Finger', 'facenet_thumb': [[207598, 207599]], 'facenet_index': [[146358, 146357], [53344, 53345]], 'width':[0, 0.11]},
                 '4':{'name': 'Large_Diameter', 'facenet_thumb': [[207598, 207599]], 'facenet_index': [[146358, 146357], [53344, 53345]], 'width':[0, 0.11]},
                 '5':{'name': 'Medium_Wrap', 'facenet_thumb': [[207416]], 'facenet_index': [[146358, 146357], [53344, 53345]], 'width':[0, 0.11]},
-                # '5':{'name': 'thumb_index_mid_ring_little_adducted_thumb', 'facenet_thumb': [[207416]], 'facenet_index': [[146358, 146357], [53344, 53345]]},
                 '6':{'name': 'Tripod', 'facenet_thumb': [[207416]], 'facenet_index': [[146358, 146357], [52220]], 'width':[0.025, 0.10]},
                 '7':{'name': 'Sphere_3_Finger', 'facenet_thumb': [[207416]], 'facenet_index': [[146358, 146357], [81881]], 'width':[0.025, 0.10]},
-                # '8':{'name': 'thumb_index_mid_ring_little_sphere_finger', 'facenet_thumb': [[207416]], 'facenet_index': [[146358, 146357],[118897]]},
                 '8':{'name': 'Distal_Type', 'facenet_thumb': [[207606]], 'facenet_index': [[53344, 53345], [82744]], 'width':[0.025, 0.10]},           
-                # '10':{'name': 'thumb_index_mid_ring_little_parallel_extenstion', 'facenet_thumb': [[207598]], 'facenet_index': [[123886, 133911], [30861]]},
-                # '11':{'name': 'thumb_index_lateral', 'facenet_thumb': [[206925]], 'facenet_index': [[132237, 132249]]},
                 }
 
 MIN_GRASP_WIDTH = 0.025
@@ -337,12 +333,10 @@ class InspireHandRGrasp():
         InspireHandR_rotation = np.array([mat_two_fingers_2_InspireHandR[0,0:3], mat_two_fingers_2_InspireHandR[1,0:3], mat_two_fingers_2_InspireHandR[2,0:3]])
 
         error_angle = width_12Dangle_6Dangle[self.get_grasp_type_with_finger_name()][str(np.round(width * 100, 1))]['6d']
-        # InspireHandR_angle = self.modify_6DAngle(width, error_angle)
         self.width = width
         self.translation = InspireHandR_translation
         self.rotation_matrix = InspireHandR_rotation
         self.angle = error_angle
-        # return InspireHandR_translation, InspireHandR_rotation, error_angle
 
     def from_grasp(self, two_fingers_grasp, InspireHandRtype, path_json):
         """Grasp to InspireHandRGrasp Transformation.
@@ -621,13 +615,11 @@ class InspireHandRGraspGroup():
             InspireHandR_rotations.append(rotation)
 
             error_angle = width_12Dangle_6Dangle[self.get_graspgroup_types_with_finger_names()[idx]][str(np.round(width * 100, 1))]['6d']
-            # angle = self.modify_6DAngle(width, error_angle)
             InspireHandR_angles.append(error_angle)
         self.widths = np.array(InspireHandR_widths)
         self.translations = np.array(InspireHandR_translations)
         self.rotation_matrices = np.array(InspireHandR_rotations)
         self.angles = np.array(InspireHandR_angles)
-        # return np.array(InspireHandR_translations), np.array(InspireHandR_rotations), np.array(InspireHandR_angles)
 
     def from_npy(self, npy_file_path):
         '''
@@ -802,5 +794,3 @@ class InspireHandRGraspGroup():
             index: numpy array of shape (len(grasp_group_array), 1).
         '''
         self.grasp_group_array = self.grasp_group_array[index]
-        # self.source_meshes_InspireHandR = self.source_meshes_InspireHandR[index]
-        # np.delete(self.source_meshes_InspireHandR, np.s_[len(index):], axis=0)

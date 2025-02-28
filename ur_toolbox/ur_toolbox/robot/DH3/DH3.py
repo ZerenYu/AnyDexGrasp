@@ -24,12 +24,10 @@ class dh_client_socket(object):
         length = 0
         date = bytes(nDate)
         length = self.client_socket.send(date)
-        #print('length: ', length)
         return length
 
     def device_read(self, length):
         date = self.client_socket.recv(length)
-        #print('recv: ', date.hex())
         return date
 
 
@@ -190,21 +188,7 @@ class DH3:
         self.m_gripper.SetTargetRotation(100)
         self.m_gripper.SetTargetPosition(0)
         
-        # k = 0
-        # while k<0:
-        #     g_state = 0
-        #     m_gripper.SetTargetPosition(0)
-        #     while(g_state == 0):
-        #         g_state = m_gripper.GetGripState()
-        #         time.sleep(0.2)
-            
-        #     g_state = 0
-        #     m_gripper.SetTargetPosition(1000)
-        #     while(g_state == 0) :
-        #         g_state = m_gripper.GetGripState()
-        #         time.sleep(0.2)
-        #     k = k + 1
-        # m_gripper.close()
+
 
     def set_ready_pose(self, position=0, rotation=100):
         self.m_gripper.SetTargetPosition(50)

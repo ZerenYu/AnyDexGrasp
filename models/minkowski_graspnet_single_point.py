@@ -226,7 +226,6 @@ class MinkowskiGraspNet(nn.Module):
         view_rot = batch_viewpoint_params_to_matrix(-view_xyz_, batch_angle).view(B, num_seed, 3, 3)
         end_points['stage2_view_xyz'] = view_xyz
         end_points['stage2_view_inds'] = view_inds
-        # end_points['stage2_view_rot'] = view_rot
         end_points['stage2_view_scores'] = view_scores
 
         # use grasp templates in training

@@ -5,7 +5,16 @@ import math
 import numpy as np
 import open3d as o3d
 
+from graspnetAPI import GraspGroup
 
+class CollisionType:
+    NONE    = 0B00000000
+    SELF    = 0B00000001
+    OTHERS  = 0B00000010
+    TABLE   = 0B00000100
+    BOX     = 0B00001000
+    ANY     = 0B11111111
+    
 class ModelFreeCollisionDetectorMultifinger():
     def __init__(self, scene_points, voxel_size=0.001):
         ''' Init function. Current finger width and length are fixed.
@@ -21,7 +30,6 @@ class ModelFreeCollisionDetectorMultifinger():
         scene_cloud = o3d.geometry.PointCloud()
         scene_cloud.points = o3d.utility.Vector3dVector(scene_points)
         self.scene_cloud = scene_cloud
-        # self.scene_cloud = scene_cloud.voxel_down_sample(voxel_size)
         self.scene_points = np.array(scene_cloud.points, dtype=np.float32)
 
     def _adjust_gripper_centers(self, grasp_group, targets, heights, depths, widths):
@@ -111,7 +119,6 @@ class ModelFreeCollisionDetectorMultifinger():
                         only returned when [return_empty_grasp] is True
         '''
 
-        # approach_dist = max(approach_dist, self.finger_width)
         T = two_fingers_ggarray.translations
         R = two_fingers_ggarray.rotation_matrices
         heights = two_fingers_ggarray.heights[:, np.newaxis]
@@ -128,24 +135,13 @@ class ModelFreeCollisionDetectorMultifinger():
         min_width_index = two_fingers_ggarray.widths > min_grasp_width
         multifinger_ggarray = multifinger_ggarray[two_fingers_ggarray.widths > min_grasp_width]
         two_fingers_ggarray = two_fingers_ggarray[two_fingers_ggarray.widths > min_grasp_width]
-        # multifinger_ggarray.widths = two_fingers_ggarray.widths
-        # for i in range(len(two_fingers_ggarray.widths)):
-        #     if multifinger_ggarray.grasp_types[i] in [0, 1, 2, 3, 5, 13]:
-        #         multifinger_ggarray.widths[i] = multifinger_ggarray.widths[i] - 0.015
+
         if len(multifinger_ggarray) == 0:
             print('min_grasp_width filter 0 ')
             return multifinger_ggarray, two_fingers_ggarray, [], min_width_index
         multifinger_ggarray.graspgroupTR_2_TR(two_fingers_ggarray, path_mesh_json)
 
-        
-        # multifinger_ggarray.translations = multifinger_translations
-        # multifinger_ggarray.rotation_matrices = multifinger_rotations.reshape((-1, 3, 3))
-        # multifinger_ggarray.angles = multifinger_angles
-
-        import time
-        st = time.time()
         meshes_pointclouds_multifinger = self.load_meshes_pcls(meshes_pcls, two_fingers_ggarray, multifinger_ggarray)
-        print('load mesh pointclouds time: ', time.time()-st)
         collision_mask = []
         empty_mask = []
 
@@ -164,15 +160,10 @@ class ModelFreeCollisionDetectorMultifinger():
                 meshes_pointclouds_cache.transform(np.array(back_distince, dtype=np.float32)).paint_uniform_color([0, 1, 0])
                 meshes_pointclouds = meshes_pointclouds + meshes_pointclouds_cache
             st3 = time.time()
-            # print(meshes_pointclouds)
             meshes_pointclouds = meshes_pointclouds.voxel_down_sample(VoxelGrid)
-            # print(meshes_pointclouds)
-            # print('collision grasp.depth: ', grasp.depth, two_fingers_ggarray[idx].depth)
+
             voxel_grid = o3d.geometry.VoxelGrid.create_from_point_cloud(input=meshes_pointclouds, voxel_size=VoxelGrid)
-            # voxel_grid = o3d.geometry.VoxelGrid.create_from_point_cloud(input=self.scene_cloud, voxel_size=VoxelGrid)
-            # print('voxel_grid time: ', time.time()-st3)
             output = voxel_grid.check_if_included(ps)
-            # print('voxel_grid.check_if_included(ps) time: ', time.time()-st3)
 
             if DEBUG:
                 print('transformed mesh')
@@ -194,12 +185,10 @@ class ModelFreeCollisionDetectorMultifinger():
                         np.array(self.scene_cloud.points)[~(np.array(output))])
                     normal_point_cloud.paint_uniform_color([0, 0, 1])
                     o3d.visualization.draw_geometries([normal_point_cloud, collision_point_cloud, FOR_base, two_fingers_ggarray[int(idx)].to_open3d_geometry()])
-                # continue
             else:
                 empty_mask.append(True)
                 collision_mask.append(output)
                 
-        print('multifinger_ggarray time: ', time.time() - st)
         collision_mask = np.array(collision_mask)
         empty_mask = np.array(empty_mask)
         return multifinger_ggarray, two_fingers_ggarray, empty_mask, min_width_index

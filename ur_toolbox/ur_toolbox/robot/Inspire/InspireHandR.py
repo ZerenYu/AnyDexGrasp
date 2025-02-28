@@ -5,7 +5,6 @@ import binascii
 import time
 import operator
 import struct
-# from .operate_four_fingers_gripper import open_gripper, close_gripper, close_machine
 
 
 which_finger_to_close = {'0':[0, 0, 0, 472, 523, 0],
@@ -24,23 +23,10 @@ which_finger_to_close = {'0':[0, 0, 0, 472, 523, 0],
 
 class InspireHandR:
     def __init__(self, port = '/dev/ttyUSB0'):
-        # pass
-        # 串口设置
-        # plist = list(list_ports.comports())
-        # print(len(plist))
-        # if len(plist) <= 0:
-        #     print("串口没找到")
-        # else:
-        #     plist_0 = list(plist[2])
-        #     print(plist_0)
-        #     serialName = plist_0[0]
-        #     print(serialName)
-        #     self.ser = serial.Serial(serialName, 115200)
 
         self.ser = serial.Serial(port, 115200)
         self.ser.isOpen()
         self.hand_id = 1
-        # print('!!!!!!!!!!1')
         power1 = 1000
         power2 = 1000
         power3 = 1000
@@ -173,17 +159,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：',putdata)
-
-        # print('发送的数据：')
-        # for i in range(1,datanum+6):
-        #     print(hex(putdata[i-1]))
-
         getdata = self.ser.read(9)
-        # print('返回的数据：',getdata)
-        # print('返回的数据：')
-        # for i in range(1,10):
-        # print(hex(getdata[i-1]))
+
         return
 
     def setangle(self, angle1, angle2, angle3, angle4, angle5, angle6):
@@ -253,14 +230,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
-
         getdata = self.ser.read(9)
-        # print('返回的数据：')
-        # for i in range(1, 10):
-        #     print(hex(getdata[i - 1]))
+
 
     # 设置力控阈值
     def setpower(self, power1, power2, power3, power4, power5, power6):
@@ -330,14 +301,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
-
         getdata = self.ser.read(9)
-        # print('返回的数据：')
-        # for i in range(1, 10):
-        #     print(hex(getdata[i - 1]))
+
 
     # 设置速度
     def setspeed(self, speed1, speed2, speed3, speed4, speed5, speed6):
@@ -407,14 +372,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
-
         getdata = self.ser.read(9)
-        # print('返回的数据：')
-        # for i in range(1, 10):
-        #     print(hex(getdata[i - 1]))
+ 
 
     # 读取驱动器实际的位置值
     def get_setpos(self):
@@ -449,15 +408,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：',putdata)
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
 
         getdata = self.ser.read(20)
-        # print('返回的数据：')
-        # for i in range(1, 21):
-        #     print(hex(getdata[i - 1]))
 
         setpos = [0] * 6
         for i in range(1, 7):
@@ -500,14 +452,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
 
         getdata = self.ser.read(20)
-        # print('返回的数据：')
-        # for i in range(1, 21):
-        #     print(hex(getdata[i - 1]))
 
         setangle = [0] * 6
         for i in range(1, 7):
@@ -550,14 +496,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
-
         getdata = self.ser.read(20)
-        # print('返回的数据：')
-        # for i in range(1, 21):
-        #     print(hex(getdata[i - 1]))
+
 
         setpower = [0] * 6
         for i in range(1, 7):
@@ -600,14 +540,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
-
         getdata = self.ser.read(20)
-        # print('返回的数据：')
-        # for i in range(1, 21):
-        #     print(hex(getdata[i - 1]))
+
 
         actpos = [0] * 6
         for i in range(1, 7):
@@ -650,14 +584,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1,datanum+6):
-        #     print(hex(putdata[i-1]))
 
         getdata = self.ser.read(20)
-        # print('返回的数据：')
-        # for i in range(1,21):
-        #     print(hex(getdata[i-1]))
 
         actangle = [0] * 6
         for i in range(1, 7):
@@ -700,14 +628,9 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1,datanum+6):
-        #     print(hex(putdata[i-1]))
 
         getdata = self.ser.read(20)
-        # print('返回的数据：')
-        # for i in range(1,21):
-        #     print(hex(getdata[i-1]))
+
 
         actforce = [0] * 6
         for i in range(1, 7):
@@ -756,14 +679,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
 
         getdata = self.ser.read(20)
-        # print('返回的数据：')
-        # for i in range(1, 21):
-        #     print(hex(getdata[i - 1]))
 
         current = [0] * 6
         for i in range(1, 7):
@@ -806,14 +723,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
 
         getdata = self.ser.read(14)
-        # print('返回的数据：')
-        # for i in range(1, 15):
-        #     print(hex(getdata[i - 1]))
 
         error = [0] * 6
         for i in range(1, 7):
@@ -853,15 +764,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
             self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
 
         getdata = self.ser.read(14)
-        # print('返回的数据：')
-        # for i in range(1, 15):
-        #     print(hex(getdata[i - 1]))
-
         status = [0] * 6
         for i in range(1, 7):
             status[i - 1] = getdata[i + 6]
@@ -900,14 +804,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
 
         getdata = self.ser.read(14)
-        # print('返回的数据：')
-        # for i in range(1, 15):
-        #     print(hex(getdata[i - 1]))
 
         temp = [0] * 6
         for i in range(1, 7):
@@ -947,14 +845,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
 
         getdata = self.ser.read(9)
-        # print('返回的数据：')
-        # for i in range(1, 10):
-        #     print(hex(getdata[i - 1]))
 
     # 保存参数到FLASH
     def set_save_flash(self):
@@ -989,14 +881,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
 
         getdata = self.ser.read(18)
-        # print('返回的数据：')
-        # for i in range(1, 19):
-        #     print(hex(getdata[i - 1]))
 
     # 力传感器校准
     def gesture_force_clb(self):
@@ -1031,14 +917,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
 
         getdata = self.ser.read(18)
-        # print('返回的数据：')
-        # for i in range(1, 19):
-        #     print(hex(getdata[i - 1]))
 
     # 设置上电速度
     def setdefaultspeed(self, speed1, speed2, speed3, speed4, speed5, speed6):
@@ -1104,14 +984,7 @@ class InspireHandR:
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
 
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
-
         getdata = self.ser.read(9)
-        # print('返回的数据：')
-        # for i in range(1, 10):
-        #     print(hex(getdata[i - 1]))
 
     # 设置上电力控阈值
     def setdefaultpower(self, power1, power2, power3, power4, power5, power6):
@@ -1176,14 +1049,8 @@ class InspireHandR:
         for i in range(1, datanum + 6):
             putdata = putdata + self.num2str(b[i - 1])
         self.ser.write(putdata)
-        # print('发送的数据：')
-        # for i in range(1, datanum + 6):
-        #     print(hex(putdata[i - 1]))
 
         getdata = self.ser.read(9)
-        # print('返回的数据：')
-        # for i in range(1, 10):
-        #     print(hex(getdata[i - 1]))
 
     def soft_setpos(self, pos1, pos2, pos3, pos4, pos5, pos6):
         value0 = 0
@@ -1195,8 +1062,7 @@ class InspireHandR:
         diffpos = pos1 - self.f1_init_pos
         tic = time.time()
         for ii in range(5):
-            #  self.setpos(pos1,pos2,pos3,pos4,pos5,pos6)
-            #  print('==========================')
+
             actforce = self.get_actforce()
             print('actforce: ', actforce)
             for i, f in enumerate(actforce[0:5]):
@@ -1226,14 +1092,6 @@ class InspireHandR:
             toc = time.time()
             print('ii: %d,toc=%f' % (ii, toc - tic))
 
-    # def reset(self):
-    #     angle1 = self.f1_init_angle  # 小拇指伸直0，弯曲2000
-    #     angle2 = self.f2_init_angle  # 无名指伸直0，弯曲2000
-    #     angle3 = self.f3_init_angle  # 中指伸直0，弯曲2000
-    #     angle4 = self.f4_init_angle  # 食指伸直0，弯曲2000
-    #     angle5 = self.f5_init_angle  # 大拇指伸直0，弯曲2000
-    #     angle6 = self.f6_init_angle  # 大拇指转向掌心 2000
-    #     self.setangle(angle1, angle2, angle3, angle4, angle5, angle6)
         return
 
     def reset(self):
@@ -1247,14 +1105,6 @@ class InspireHandR:
         return
 
     def open_gripper(self, angle=np.array([1000, 1000, 1000, 585, 545, 100]), sleep_time=0.5):
-        # 设置角度
-        # angle1 = 0  #小拇指伸直1000，弯曲0
-        # angle2 = 0  #无名指伸直1000, 弯曲0
-        # angle3 = 0  #中指伸直1000，弯曲0
-        # angle4 = 0  #食指伸直1000，弯曲0
-        # angle5 = 1000 #大拇指伸直1000，弯曲0
-        # angle6 = 1000 #大拇指转向掌心 0, 100表示拇指与食指平行
-        # setangle(angle1,angle2,angle3,angle4,angle5,angle6)
         angle0, angle1, angle2, angle3, angle4, angle5 = angle
         self.setangle(int(angle0), int(angle1), int(angle2), int(angle3), int(angle4), int(angle5))
         time.sleep(sleep_time)
@@ -1266,18 +1116,11 @@ class InspireHandR:
         thumb_latitude = 60
         others_latitude = 60
         for latitude in range(1, 20):
-            # value = 65 * latitude
-            # actforce = self.get_actforce()
             actangle = self.get_actangle()
-            # fingers_used_force= actforce[5 - (int(InspireHandR_type) + 2):-1]
-            # if ((np.array(fingers_used_force) > 970).sum() == len(fingers_used_force)).astype(np.int):
-            #     break
             for ids, finger in enumerate(close_finger):
                 if finger != 0:
                     angle[ids] = max(angle[ids] - others_latitude, finger)    
             angle0, angle1, angle2, angle3, angle4, angle5 = angle
             self.setangle(int(angle0), int(angle1), int(angle2), int(angle3), int(angle4), int(angle5))
-            print('act angle force: ', self.get_actforce(), self.get_actangle(), angle)
-        print('act angle: ', angle)
         time.sleep(sleep_time)
         

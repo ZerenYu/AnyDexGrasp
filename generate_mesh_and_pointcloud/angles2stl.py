@@ -76,20 +76,6 @@ class InspireAngles2STLs():
         return grasp_translation, grasp_rotation 
 
     def common_grasp_information(self, grasp_type, meshes, facenet_thumb, facenet_index):
-        # point0 = (self.get_center_orientation(meshes, facenet_thumb[0][0]) + self.get_center_orientation(meshes, facenet_thumb[0][1])) / 2
-        # point1 = (self.get_center_orientation(meshes, facenet_index[0][0]) + self.get_center_orientation(meshes, facenet_index[0][1])) / 2
-        # point2 = (self.get_center_orientation(meshes, facenet_index[1][0]) + self.get_center_orientation(meshes, facenet_index[1][1])) / 2
-
-        # end_point0 = point0
-        # end_point1 = (point1 + point2) / 2
-        # grasp_translation = (end_point0 + end_point1) / 2
-
-        # tool_x = self.normalize(self.get_normal_vector(point0, point1, point2)).reshape((3, 1))
-        # tool_y = self.normalize(point0 - grasp_translation).reshape((3, 1))
-        # tool_z = np.cross(tool_x, tool_y)
-        # grasp_rotation = np.c_[tool_x, tool_y, tool_z]
-        # return grasp_translation, grasp_rotation
-        # print(facenet_index)
         midpoint1, centers1, mesh_di1 = self.compute_center(meshes, facenet_thumb=facenet_thumb[0],
                                                                     facenet_index=facenet_index[0])
         midpoint2, centers2, mesh_di2 = self.compute_center(meshes, facenet_thumb=facenet_thumb[0],
@@ -164,10 +150,6 @@ class InspireAngles2STLs():
         facenet_index = self.grasp_types[str(grasp_type+1)]['facenet_index']
         if grasp_type < 4:
             translation, rotation = self.common_grasp_information(grasp_type, meshes, facenet_thumb, facenet_index)
-        # elif grasp_type == 5 or grasp_type == 6:
-        #     facenet_thumb = self.grasp_types['1']['facenet_thumb']
-        #     facenet_index = self.grasp_types['1']['facenet_index']
-        #     translation, rotation = self.common_grasp_information(grasp_type, meshes, facenet_thumb, facenet_index)
         elif grasp_type < 11:
             translation, rotation = self.special_grasp_information(grasp_type, meshes, facenet_thumb, facenet_index)
         elif grasp_type == 11:
@@ -299,14 +281,6 @@ class AllegroAngles2STLs():
         point1 = self.get_center_orientation(meshes, facenet_index[0])
         point2 = self.get_center_orientation(meshes, facenet_index[1])
 
-        # if len(facenet_index) == 1:
-        #     end_point0 = point0
-        #     end_point1 = point1
-        # elif len(facenet_index) == 2:
-            
-        # else:
-        #     raise ValueError('facenet must be equal to 1 or 2')
-
         end_point0 = point0
         end_point1 = (point1 + point2) / 2
 
@@ -323,20 +297,12 @@ class AllegroAngles2STLs():
             tool_y = self.get_center_orientation(meshes, facenet_index[0]) - self.get_center_orientation(meshes, facenet_thumb[0])
             tool_x = self.normalize(tool_x)
             tool_y = self.normalize(tool_y)
-            # tool_x = [0, 0, 1]
-            
-        # if grasp_type == 17:
-        #     tool_x = np.array([0, 0, 1])
-        #     tool_y = np.array([1, 0, 0])
-        #     grasp_translation[2] = grasp_translation[2] - 0.001 * width
 
         tool_z = np.cross(tool_x, tool_y)
         grasp_rotation = np.c_[tool_x, tool_y, tool_z]
         if grasp_type in [11]:
             grasp_rotation = np.c_[-tool_z, tool_y, tool_x]
-        # if grasp_type in [13]:
-        #     grasp_rotation = np.c_[tool_z, -tool_y, tool_x]
-        
+  
         return grasp_translation, grasp_rotation
 
     def special_grasp_information(self, meshes, facenet_index, width, grasp_type):
@@ -349,8 +315,6 @@ class AllegroAngles2STLs():
 
         tool_x = np.array([1, 0, 0])
         tool_y = np.array([0, 0, -1])
-        # if grasp_type in [14]:
-        #     grasp_translation = end_point0 + (width * 0.01) * self.normalize(self.get_normal_vector(point0, point1, point2)) / 2 + [-0.005, -0.01, 0]
         tool_z = np.cross(tool_x, tool_y)
         grasp_rotation = np.c_[tool_x, tool_y, tool_z]
         return grasp_translation, grasp_rotation

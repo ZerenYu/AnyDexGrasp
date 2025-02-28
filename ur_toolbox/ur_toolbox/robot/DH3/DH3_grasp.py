@@ -602,7 +602,6 @@ class DH3GraspGroup():
         self.translations = np.array(DH3_translations)
         self.rotation_matrices = np.array(DH3_rotations)
         self.angles = np.array(DH3_angles)
-        # return np.array(DH3_translations), np.array(DH3_rotations), np.array(DH3_angles)
 
     def from_npy(self, npy_file_path):
         '''
@@ -763,5 +762,3 @@ class DH3GraspGroup():
             index: numpy array of shape (len(grasp_group_array), 1).
         '''
         self.grasp_group_array = self.grasp_group_array[index]
-        # self.source_meshes_DH3 = self.source_meshes_DH3[index]
-        # np.delete(self.source_meshes_DH3, np.s_[len(index):], axis=0)

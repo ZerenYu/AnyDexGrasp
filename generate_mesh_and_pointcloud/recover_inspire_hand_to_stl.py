@@ -25,19 +25,6 @@ joint_mesh_mapping = {"base": "Link111.STL",
                       "9": "Link51.STL",
                       "10": "Link52.STL",
                       "11": "Link53.STL"}
-# grasp_types = {'1':{'name': 'Ring', 'facenet_thumb': [[207598, 207599]], 'facenet_index': [[146358, 146357], [53344, 53345]]},
-#                 '2':{'name': 'Prismatic_2_Finger', 'facenet_thumb': [[207598, 207599]], 'facenet_index': [[146358, 146357], [53344, 53345]]},
-#                 '3':{'name': 'Prismatic_3_Finger', 'facenet_thumb': [[207598, 207599]], 'facenet_index': [[146358, 146357], [53344, 53345]]},
-#                 '4':{'name': 'Large_Diameter', 'facenet_thumb': [[207598, 207599]], 'facenet_index': [[146358, 146357], [53344, 53345]]},
-#                 '5':{'name': 'Medium_Wrap', 'facenet_thumb': [[207416]], 'facenet_index': [[146358, 146357], [53344, 53345]]},
-#                 # '5':{'name': 'thumb_index_mid_ring_little_adducted_thumb', 'facenet_thumb': [[207416]], 'facenet_index': [[146358, 146357], [53344, 53345]]},
-#                 '6':{'name': 'Tripod', 'facenet_thumb': [[207416]], 'facenet_index': [[146358, 146357], [52220]]},
-#                 '7':{'name': 'Sphere_3_Finger', 'facenet_thumb': [[207416]], 'facenet_index': [[146358, 146357], [81881]]},
-#                 # '8':{'name': 'thumb_index_mid_ring_little_sphere_finger', 'facenet_thumb': [[207416]], 'facenet_index': [[146358, 146357],[118897]]},
-#                 '8':{'name': 'Distal_Type', 'facenet_thumb': [[207606]], 'facenet_index': [[53344, 53345], [82744]]},           
-#                 # '10':{'name': 'thumb_index_mid_ring_little_parallel_extenstion', 'facenet_thumb': [[207598]], 'facenet_index': [[123886, 133911], [30861]]},
-#                 # '11':{'name': 'thumb_index_lateral', 'facenet_thumb': [[206925]], 'facenet_index': [[132237, 132249]]},
-#                 }
 
 def four_meta_to_matrix(x):
     xyz = [x[0], x[1], x[2]]
@@ -95,12 +82,9 @@ def read_excel_6Dangle_to_12Dangle(path_6d, path_12d):
                     (81.6751504, 150.2673673), (133.3610164, 105.5103515),(180.6024, 149.1983,), (166.9032, 141.6969)]
     
     wb_6d = xlrd2.open_workbook(path_6d)
-    # import pdb
-    # pdb.set_trace()
-    
+ 
     for pose_id in range(len(wb_6d.sheets())):
-        # if pose_id != 7:
-        #     continue
+
         sheet_6d = wb_6d.sheet_by_index(pose_id)
 
         width = sheet_6d.col_values(0)[1:]
@@ -113,8 +97,6 @@ def read_excel_6Dangle_to_12Dangle(path_6d, path_12d):
         thumb_bending_6d = sheet_6d.col_values(5)[1:]
         thumb_rotation_6d = sheet_6d.col_values(6)[1:]
         for ids, _ in enumerate(index_6d):
-            # if ids < 68:
-            #     continue
             if index_6d[ids] == -1:
                 continue
             index_scope = int(float(index_6d[ids])*(1857-20)/1000)
@@ -132,17 +114,11 @@ def read_excel_6Dangle_to_12Dangle(path_6d, path_12d):
 
             
             thumb_bending_scope = int((thumb_bending_6d[ids])*(1606-53)/1000)
-            # thumb_bending = [(139.27-thumb_bending_1_12d[thumb_bending_scope])/(139.27-110.53)*0.4,
-            #                 (188.08-thumb_bending_2_12d[thumb_bending_scope])/(188.08-154.27)*(-0.4),
-            #                 (169.94-thumb_bending_3_12d[thumb_bending_scope])/(169.94-147.53)*(-1.0)]
             thumb_bending = [(thumb_bending_1_12d[thumb_bending_scope]-139.27)/(139.27-110.53)*0.433+0.13,
                          (thumb_bending_2_12d[thumb_bending_scope]-188.08)/(154.27-188.08)*(0.179+0.267)-0.237,
                          (thumb_bending_3_12d[thumb_bending_scope]-169.94)/(147.53-169.94)*0.503-0.7]
-            # thumb_bending = [rate((139.27, 110.53), (-0.3, 0.133), thumb_bending_1_12d[thumb_bending_scope]),
-            #                 rate((188.08, 154.27), (-0.267, 0.179), thumb_bending_2_12d[thumb_bending_scope]),
-            #                 rate((169.94, 147.53), (-0.3, -0.803), thumb_bending_3_12d[thumb_bending_scope])]
-            
-            thumb_rotation_scope = int(float(thumb_rotation_6d[ids])*(2000-400)/1000) + 400 #[anti_rate((111.6751504, 174.02), (-1.2, 0.3), 169.2747667), -1.3]
+
+            thumb_rotation_scope = int(float(thumb_rotation_6d[ids])*(2000-400)/1000) + 400 
             thumb_rotation = anti_rate((185.5631219, 106.72277927615), (-1.3, 0.3), thumb_rotation_12d[thumb_rotation_scope])
             if pose_id == 0:
                 thumb_rotation = anti_rate((81.6751504, 174.02), (-1.2, 0.3), 169.2747667)
@@ -213,7 +189,6 @@ def save_stl_and_pointcloud(name, angle, mesh, output_path):
 
 def get_meshes(angles, stl_path, output_path, width_12Dangle_6Dangel_json, urdf_path, if_source, vis):
     p, hand = open_pybullet(urdf_path)
-    # p.stepSimulatiograsp_n()
     angles_to_stls = InspireAngles2STLs(grasp_types)
     width_12Dangle_6Dangel = dict()
     for grasp_type, angle8 in enumerate(angles):
@@ -260,14 +235,10 @@ def get_meshes(angles, stl_path, output_path, width_12Dangle_6Dangel_json, urdf_
                     translation, rotation = translation.tolist(), rotation.tolist()
                 if str(name) not in width_12Dangle_6Dangel.keys():
                     width_12Dangle_6Dangel[name] = dict()
-                # if grasp_type != 0 and grasp_type != 1:
-                #     rotation = width_12Dangle_6Dangel[grasp_type[str(1)]][str(width)]['rotation']
-                #     midpoint = width_12Dangle_6Dangel[grasp_type[str(1)]][str(width)]['translation']
                 if width in width_12Dangle_6Dangel[grasp_types[str(grasp_type+1)]['name']].keys():
                     print('*******************************\n\nerror!!!!!!!!', grasp_type, grasp_type[str(grasp_type+1)], width)
                 width_12Dangle_6Dangel[name][str(width)] = {'12d': angles[grasp_type][id][:12], '6d': angles[grasp_type][id][13:],
                                                         'translation': translation,  'rotation': rotation}
-                # print(translation, rotation)
 
     if if_source:
         json_str = json.dumps(width_12Dangle_6Dangel, indent=4)
@@ -286,7 +257,6 @@ if __name__ == '__main__':
 
     angles = read_excel_6Dangle_to_12Dangle(path_6d, path_12d)
     get_meshes(angles, source_stl_path, output_path, json_path, urdf_path, if_source=True, vis=False)
-    # angles_to_stl(angles, simplified_stl_path, simplified_out_path, simplified_json_path, urdf_path, if_source=False, vis=False)
 
 
 

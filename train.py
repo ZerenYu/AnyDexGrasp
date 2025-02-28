@@ -29,13 +29,13 @@ from loss import GraspLoss
 from solvers import PolyLR
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', default='minkowski_graspnet', help='Model file name [default: minkowski_graspnet]')
+parser.add_argument('--model', default='minkowski_graspnet_single_point', help='Model file name [default: minkowski_graspnet_single_point]')
 parser.add_argument('--dataset', default='graspnet', help='Dataset name. ycb or graspnet. [default: graspnet]')
 parser.add_argument('--camera', default='kinect', help='data source [realsense/kinect] [default: kinect]')
 parser.add_argument('--stage', default='full', help='Training stage (stage1/stage2/full). [default: stage1]')
 parser.add_argument('--stage1_checkpoint_path', default=None, help='Model stage 1 checkpoint path [default: None]')
 parser.add_argument('--checkpoint_path', default=None, help='Model checkpoint path [default: None]')
-parser.add_argument('--log_dir', default='log', help='Dump dir to save model checkpoint [default: log]')
+parser.add_argument('--log_dir', default='logs/model/rep_log', help='Dump dir to save model checkpoint')
 parser.add_argument('--num_view', type=int, default=300, help='View Number [default: 300]')
 parser.add_argument('--max_epoch', type=int, default=18, help='Epoch to run [default: 18]')
 parser.add_argument('--batch_size', type=int, default=8, help='Batch Size during training [default: 2]')
@@ -101,7 +101,7 @@ def my_worker_init_fn(worker_id):
 
 # Create Dataset and Dataloader
 # graspnet_v1_root = '/home/minghao/graspnet'
-graspnet_v1_root = '/aidata/graspnet_v1_newformat'
+graspnet_v1_root = 'logs/data/representation_model/graspnet_v1_newformat'
 graspnet_v2_root = '/aidata/graspnet_v2'
 if FLAGS.use_dataset_v2:
     valid_obj_idxs, grasp_labels = load_grasp_labels(graspnet_v2_root, use_v2=True)
@@ -111,13 +111,11 @@ TRAIN_DATASET = GraspNetVoxelizationDataset(graspnet_v1_root, valid_obj_idxs, gr
 TEST_DATASET = GraspNetVoxelizationDataset(graspnet_v1_root, valid_obj_idxs, grasp_labels, camera=CAMERA, split='test_seen', remove_outlier=True, remove_invisible=True, augment=False, use_v2=FLAGS.use_dataset_v2, centralize_points=FLAGS.centralize_points)
 
 print(len(TRAIN_DATASET), len(TEST_DATASET))
-# print(len(TRAIN_DATASET))
 TRAIN_DATALOADER = DataLoader(TRAIN_DATASET, batch_size=BATCH_SIZE, shuffle=True,
     num_workers=5, worker_init_fn=my_worker_init_fn, collate_fn=collate_fn)
 TEST_DATALOADER = DataLoader(TEST_DATASET, batch_size=BATCH_SIZE, shuffle=False,
     num_workers=5, worker_init_fn=my_worker_init_fn, collate_fn=collate_fn)
 print(len(TRAIN_DATALOADER), len(TEST_DATALOADER))
-# print(len(TRAIN_DATALOADER))
 # Init the model and optimzier
 MODEL = importlib.import_module(FLAGS.model) # import network module
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
