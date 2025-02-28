@@ -38,7 +38,7 @@ Dexterous grasp pose detection network built upon [MinkowskiEngine](https://gith
 
    Install Allegro Hand upon [Allegro-Hand-Controller-DIME](https://github.com/NYU-robot-learning/Allegro-Hand-Controller-DIME).
 
-7. Download model weights and data at [GoogleDrive](https://pan.baidu.com/s/1OFmqyjNzMg88WsWZj7ZYJQ) and put it under ``logs/``.
+7. Download model weights and data at [GoogleDrive](https://pan.baidu.com/s/1OFmqyjNzMg88WsWZj7ZYJQ) and put it under ``logs/`` and extract zip files in ``logs/data/representation_model/graspnet_v1_newformat/`` to ``logs/data/representation_model/graspnet_v1_newformat/``.   
    Download the data from the [Graspnet](https://graspnet.net/datasets.html) web page and extract it to ``logs/data/representation_model/graspnet_v1_newformat/``
 
 ## Generating the STL file for dexterous hand.
