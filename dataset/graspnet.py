@@ -30,7 +30,7 @@ MAX_GRIPPER_WIDTH = 0.08
 MAX_MU = 1.0
 MIN_MU = 0.1
 MAX_GRASP_SCORE = np.log(MAX_MU / MIN_MU)
-CONVERT_TO_NEW_DEIVCE = ['object_poses_list', 'grasp_points_list', 'grasp_widths_list', 'grasp_labels_list', 'grasp_heatmap_list', 'grasp_view_heatmap_list', 'grasp_heatmap_raw_list', 'grasp_collision_list']
+CONVERT_TO_NEW_DEIVCE = ['object_poses_list', 'grasp_points_list', 'grasp_widths_list', 'grasp_labels_list', 'grasp_heatmap_list', 'grasp_view_heatmap_list', 'grasp_heatmap_raw_list']
 BOX_LIST = [192, 193]
 IGNORED_LABELS = [18]
 IGNORED_SCENES = [248,351,352,353,354,365,392,393,394]
@@ -46,7 +46,7 @@ class CameraInfo():
         self.scale = scale
 
 class GraspNetVoxelizationDataset(Dataset):
-    def __init__(self, root, valid_obj_idxs=None, grasp_labels=None, camera='kinect', split='train', voxel_size=0.005, heatmap='scene', heatmap_th=0.6, view_heatmap_th=0.6, score_as_heatmap=False, score_as_view_heatmap=False, remove_outlier=False, remove_invisible=False, augment=False, load_label=True, add_table_collision=False, centralize_points=False):
+    def __init__(self, root, valid_obj_idxs=None, grasp_labels=None, camera='kinect', split='train', voxel_size=0.005, heatmap='scene', heatmap_th=0.6, view_heatmap_th=0.6, score_as_heatmap=False, score_as_view_heatmap=False, remove_outlier=False, remove_invisible=False, augment=False, load_label=True, centralize_points=False):
         self.root = root
         self.split = split
         self.voxel_size = voxel_size
@@ -62,7 +62,6 @@ class GraspNetVoxelizationDataset(Dataset):
         self.camera = camera
         self.augment = augment
         self.load_label = load_label
-        self.add_table_collision = add_table_collision
         self.centralize_points = centralize_points
 
         assert(self.camera in ['kinect', 'realsense'])
@@ -356,8 +355,6 @@ class GraspNetVoxelizationDataset(Dataset):
         grasp_view_heatmap_list = []
         # grasp_heatmap_raw_list = []
         ret_obj_idxs = []
-        if self.add_table_collision:
-            grasp_collision_list = []
         for i,obj_idx in enumerate(obj_idxs):
             if obj_idx not in self.valid_obj_idxs:
                 continue
@@ -365,8 +362,6 @@ class GraspNetVoxelizationDataset(Dataset):
                 continue 
             points, data = self.grasp_labels[obj_idx][:2]
             collision = (collision_labels[i] > 0)
-            if self.add_table_collision:
-                table_collision = ((collision_labels[i] & CollisionType.TABLE) > 0)
 
             widths = data[:,:,:,:,0]
             width_mask = ((widths>0) & (widths<MAX_GRIPPER_WIDTH))
@@ -381,8 +376,6 @@ class GraspNetVoxelizationDataset(Dataset):
                 widths = widths[visible_idxs]
                 scores = scores[visible_idxs]
                 collision = collision[visible_idxs]
-                if self.add_table_collision:
-                    table_collision = table_collision[visible_idxs]
 
             # generate heatmap
             if self.score_as_heatmap:
@@ -413,8 +406,6 @@ class GraspNetVoxelizationDataset(Dataset):
             grasp_labels_list.append(scores.astype(np.float32))
             grasp_heatmap_list.append(grasp_heatmap.astype(np.float32))
             grasp_view_heatmap_list.append(grasp_view_heatmap.astype(np.float32))
-            if self.add_table_collision:
-                grasp_collision_list.append(table_collision.astype(np.bool))
             ret_obj_idxs.append(obj_idx)
 
         ret_dict = {}
@@ -429,8 +420,6 @@ class GraspNetVoxelizationDataset(Dataset):
         ret_dict['grasp_labels_list'] = grasp_labels_list
         ret_dict['grasp_heatmap_list'] = grasp_heatmap_list
         ret_dict['grasp_view_heatmap_list'] = grasp_view_heatmap_list
-        if self.add_table_collision:
-            ret_dict['grasp_collision_list'] = grasp_collision_list
 
         return ret_dict
 
