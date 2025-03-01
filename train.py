@@ -46,7 +46,6 @@ parser.add_argument('--bn_decay_rate', type=float, default=0.5, help='Decay rate
 parser.add_argument('--lr_decay_steps', default='8,12,16', help='When to decay the learning rate (in epochs) [default: 40,60,80]')
 parser.add_argument('--lr_decay_rates', default='0.1,0.1,0.1', help='Decay rates for lr decay [default: 0.1,0.1,0.1]')
 parser.add_argument('--overwrite', action='store_true', help='Overwrite existing log and dump folders.')
-parser.add_argument('--use_dataset_v2', action='store_true', help='Use graspnet v2 format.')
 parser.add_argument('--centralize_points', action='store_true', help='Point centralization.')
 parser.add_argument('--half_views', action='store_true', help='Use only half views in network.')
 FLAGS = parser.parse_args()
@@ -100,15 +99,10 @@ def my_worker_init_fn(worker_id):
     pass
 
 # Create Dataset and Dataloader
-# graspnet_v1_root = '/home/minghao/graspnet'
 graspnet_v1_root = 'logs/data/representation_model/graspnet_v1_newformat'
-graspnet_v2_root = '/aidata/graspnet_v2'
-if FLAGS.use_dataset_v2:
-    valid_obj_idxs, grasp_labels = load_grasp_labels(graspnet_v2_root, use_v2=True)
-else:
-    valid_obj_idxs, grasp_labels = load_grasp_labels(graspnet_v1_root)
-TRAIN_DATASET = GraspNetVoxelizationDataset(graspnet_v1_root, valid_obj_idxs, grasp_labels, camera=CAMERA, split='train', remove_outlier=True, remove_invisible=True, augment=True, heatmap='scene', score_as_heatmap=False, score_as_view_heatmap=False, heatmap_th=0.6, view_heatmap_th=0.6, use_v2=FLAGS.use_dataset_v2, centralize_points=FLAGS.centralize_points)
-TEST_DATASET = GraspNetVoxelizationDataset(graspnet_v1_root, valid_obj_idxs, grasp_labels, camera=CAMERA, split='test_seen', remove_outlier=True, remove_invisible=True, augment=False, use_v2=FLAGS.use_dataset_v2, centralize_points=FLAGS.centralize_points)
+valid_obj_idxs, grasp_labels = load_grasp_labels(graspnet_v1_root)
+TRAIN_DATASET = GraspNetVoxelizationDataset(graspnet_v1_root, valid_obj_idxs, grasp_labels, camera=CAMERA, split='train', remove_outlier=True, remove_invisible=True, augment=True, heatmap='scene', score_as_heatmap=False, score_as_view_heatmap=False, heatmap_th=0.6, view_heatmap_th=0.6, centralize_points=FLAGS.centralize_points)
+TEST_DATASET = GraspNetVoxelizationDataset(graspnet_v1_root, valid_obj_idxs, grasp_labels, camera=CAMERA, split='test_seen', remove_outlier=True, remove_invisible=True, augment=False, centralize_points=FLAGS.centralize_points)
 
 print(len(TRAIN_DATASET), len(TEST_DATASET))
 TRAIN_DATALOADER = DataLoader(TRAIN_DATASET, batch_size=BATCH_SIZE, shuffle=True,

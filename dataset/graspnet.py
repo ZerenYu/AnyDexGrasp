@@ -34,7 +34,6 @@ CONVERT_TO_NEW_DEIVCE = ['object_poses_list', 'grasp_points_list', 'grasp_widths
 BOX_LIST = [192, 193]
 IGNORED_LABELS = [18]
 IGNORED_SCENES = [248,351,352,353,354,365,392,393,394]
-graspnet_v2_root = 'logs/data/representation_model/'
 
 class CameraInfo():
     def __init__(self, width, height, fx, fy, cx, cy, scale):
@@ -47,7 +46,7 @@ class CameraInfo():
         self.scale = scale
 
 class GraspNetVoxelizationDataset(Dataset):
-    def __init__(self, root, valid_obj_idxs=None, grasp_labels=None, camera='kinect', split='train', voxel_size=0.005, heatmap='scene', heatmap_th=0.6, view_heatmap_th=0.6, score_as_heatmap=False, score_as_view_heatmap=False, remove_outlier=False, remove_invisible=False, augment=False, load_label=True, use_v2=False, add_table_collision=False, centralize_points=False, add_stability=False, add_vdistance=False):
+    def __init__(self, root, valid_obj_idxs=None, grasp_labels=None, camera='kinect', split='train', voxel_size=0.005, heatmap='scene', heatmap_th=0.6, view_heatmap_th=0.6, score_as_heatmap=False, score_as_view_heatmap=False, remove_outlier=False, remove_invisible=False, augment=False, load_label=True, add_table_collision=False, centralize_points=False):
         self.root = root
         self.split = split
         self.voxel_size = voxel_size
@@ -63,11 +62,8 @@ class GraspNetVoxelizationDataset(Dataset):
         self.camera = camera
         self.augment = augment
         self.load_label = load_label
-        self.use_v2 = use_v2
         self.add_table_collision = add_table_collision
         self.centralize_points = centralize_points
-        self.add_stability = add_stability
-        self.add_vdistance = add_vdistance
 
         assert(self.camera in ['kinect', 'realsense'])
         assert(self.split in ['train', 'test', 'test_seen', 'test_similar', 'test_novel', 'ablation_train', 'ablation_val'])
@@ -117,23 +113,6 @@ class GraspNetVoxelizationDataset(Dataset):
                     self.collision_labels[x.strip()][i] = collision_labels['arr_{}'.format(i)]
                 self.pointgraspness[x.strip()] = np.load(os.path.join(root, 'pre_generated_label_combinescore', x, camera, 'point_graspness.npy'), allow_pickle=True)
                 self.visibleid[x.strip()] = np.load(os.path.join(root, 'pre_generated_label_combinescore', x, camera, 'visibleid.npy'), allow_pickle=True)
-
-        if self.use_v2 and ('test' not in split):
-            sceneIds_v2 = os.listdir(os.path.join(graspnet_v2_root, 'scenes'))
-            sceneIds_v2 = sorted([x for x in sceneIds_v2 if 'scene' in x])
-            camera = 'data' if camera=='realsense' else 'data_kinect'
-            for i,x in enumerate(tqdm(sceneIds_v2, desc = 'Loading data_v2 path and collision labels...')):
-                for img_num in range(256):
-                    self.colorpath.append(os.path.join(graspnet_v2_root, 'scenes', x, camera, 'rgb', str(img_num).zfill(4)+'.png'))
-                    self.depthpath.append(os.path.join(graspnet_v2_root, 'scenes', x, camera, 'depth', str(img_num).zfill(4)+'.png'))
-                    self.labelpath.append(os.path.join(graspnet_v2_root, 'scenes', x, camera, 'label', str(img_num).zfill(4)+'.png'))
-                    self.metapath.append(os.path.join(graspnet_v2_root, 'scenes', x, camera, 'meta', str(img_num).zfill(4)+'.mat'))
-                    self.scenename.append(x.strip())
-                    self.frameid.append(img_num)
-                collision_labels = np.load(os.path.join(graspnet_v2_root, 'collision_label', x.strip(),  'collision_labels.npz'))
-                self.collision_labels[x.strip()] = {}
-                for i in range(len(collision_labels)):
-                    self.collision_labels[x.strip()][i] = collision_labels['arr_{}'.format(i)]
 
     def __len__(self):
         return len(self.colorpath)
@@ -258,12 +237,8 @@ class GraspNetVoxelizationDataset(Dataset):
         depth_mask = (depth > 0)
         seg_mask = (seg > 0)
         if self.remove_outlier:
-            if int(scene.split('_')[-1]) <= 190:
-                root = self.root
-                camera_split = self.camera
-            else:
-                root = graspnet_v2_root
-                camera_split = 'data' if self.camera=='realsense' else 'data_kinect'
+            root = self.root
+            camera_split = self.camera
             camera_poses = np.load(os.path.join(root, 'scenes', scene, camera_split, 'camera_poses.npy'))
             align_mat = np.load(os.path.join(root, 'scenes', scene, camera_split, 'cam0_wrt_table.npy'))
             trans = np.dot(align_mat, camera_poses[self.frameid[index]])
@@ -329,12 +304,8 @@ class GraspNetVoxelizationDataset(Dataset):
         # get valid points
         depth_mask = (depth > 0)
         if self.remove_outlier:
-            if int(scene.split('_')[-1]) <= 190:
-                root = self.root
-                camera_split = self.camera
-            else:
-                root = graspnet_v2_root
-                camera_split = 'data' if self.camera=='realsense' else 'data_kinect'
+            root = self.root
+            camera_split = self.camera
             camera_poses = np.load(os.path.join(root, 'scenes', scene, camera_split, 'camera_poses.npy'))
             align_mat = np.load(os.path.join(root, 'scenes', scene, camera_split, 'cam0_wrt_table.npy'))
             trans = np.dot(align_mat, camera_poses[frameid])
@@ -387,20 +358,12 @@ class GraspNetVoxelizationDataset(Dataset):
         ret_obj_idxs = []
         if self.add_table_collision:
             grasp_collision_list = []
-        if self.add_stability:
-            grasp_stability_list = []
-        if self.add_vdistance:
-            grasp_vdistance_list = []
         for i,obj_idx in enumerate(obj_idxs):
             if obj_idx not in self.valid_obj_idxs:
                 continue
             if (seg_voxeled == obj_idx).sum() < 50:
                 continue 
             points, data = self.grasp_labels[obj_idx][:2]
-            if self.add_stability:
-                stability = self.grasp_labels[obj_idx][3]
-            if self.add_vdistance:
-                vdistance = self.grasp_labels[obj_idx][3+int(self.add_stability)]
             collision = (collision_labels[i] > 0)
             if self.add_table_collision:
                 table_collision = ((collision_labels[i] & CollisionType.TABLE) > 0)
@@ -420,10 +383,6 @@ class GraspNetVoxelizationDataset(Dataset):
                 collision = collision[visible_idxs]
                 if self.add_table_collision:
                     table_collision = table_collision[visible_idxs]
-                if self.add_stability:
-                    stability = stability[visible_idxs]
-                if self.add_vdistance:
-                    vdistance = vdistance[visible_idxs]
 
             # generate heatmap
             if self.score_as_heatmap:
@@ -456,10 +415,6 @@ class GraspNetVoxelizationDataset(Dataset):
             grasp_view_heatmap_list.append(grasp_view_heatmap.astype(np.float32))
             if self.add_table_collision:
                 grasp_collision_list.append(table_collision.astype(np.bool))
-            if self.add_stability:
-                grasp_stability_list.append(stability.astype(np.bool))
-            if self.add_vdistance:
-                grasp_vdistance_list.append(vdistance.astype(np.float32))
             ret_obj_idxs.append(obj_idx)
 
         ret_dict = {}
@@ -476,15 +431,11 @@ class GraspNetVoxelizationDataset(Dataset):
         ret_dict['grasp_view_heatmap_list'] = grasp_view_heatmap_list
         if self.add_table_collision:
             ret_dict['grasp_collision_list'] = grasp_collision_list
-        if self.add_stability:
-            ret_dict['grasp_stability_list'] = grasp_stability_list
-        if self.add_vdistance:
-            ret_dict['grasp_vdistance_list'] = grasp_vdistance_list
 
         return ret_dict
 
-def load_grasp_labels(root, use_v2=False, add_stability=False, add_vdistance=False):
-    obj_names = list(range(194)) if use_v2 else list(range(88))
+def load_grasp_labels(root):
+    obj_names = list(range(88))
     valid_obj_idxs = []
     grasp_labels = {}
     for i, obj_name in enumerate(tqdm(obj_names, desc='Loading fric representation labels...')):
@@ -496,17 +447,6 @@ def load_grasp_labels(root, use_v2=False, add_stability=False, add_vdistance=Fal
         data[(data[:,:,:,:,1]>0)&(data[:,:,:,:,1]<=MIN_MU),1] = MIN_MU
 
         grasp_labels[obj_name + 1] = [label['points'].astype(np.float32), data]
-        if add_stability:
-            sparse_stability_label = np.load(os.path.join(root, 'stability', '{}.npz'.format(obj_name)))
-            sparse_inds = sparse_stability_label['ind'].astype(np.int32)
-            sparse_inds = sparse_inds[sparse_stability_label['stability'][:,1]>3]
-            stability = np.zeros_like(label['scores'], dtype=np.bool)
-            stability[sparse_inds[:,0],sparse_inds[:,1],sparse_inds[:,2],sparse_inds[:,3]] = True
-            grasp_labels[obj_name + 1].append(stability)
-        if add_vdistance:
-            vdistance = np.load(os.path.join(BASE_DIR, 'vertical_distance', '%03d.npy'%i))
-            vdistance /= vdistance.max()
-            grasp_labels[obj_name + 1].append(vdistance.astype(np.float32))
 
     return valid_obj_idxs, grasp_labels
 
