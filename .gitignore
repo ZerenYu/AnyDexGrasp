@@ -20,6 +20,7 @@
 render_kitchen.py
 .history/
 
+**/meshes/**
 **/MinkowskiEngine
 **/ur_toolbox/ur_toolbox.egg-info/
 **/ur_toolbox/dist/
