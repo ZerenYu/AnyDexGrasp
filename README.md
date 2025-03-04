@@ -3,7 +3,7 @@ Dexterous grasp pose detection network built upon [MinkowskiEngine](https://gith
 
 ## Requirements
 - [Anaconda](https://www.anaconda.com/) with Python 3.8
-- PyTorch 1.13 with CUDA 12.2
+- PyTorch 1.13 with CUDA 11.7
 - [MinkowskiEngine](https://github.com/NVIDIA/MinkowskiEngine) v0.5
 
 ## Installation
