@@ -17,7 +17,6 @@ from .wsg import WSG
 from .Inspire.InspireHandR import InspireHandR
 from .DH3.DH3 import DH3
 from .Allegro.Allegro import Allegro
-from .uSkin.uSkin import USkinSensor
 # import ikfastpy
 
 from graspnetAPI import Grasp
