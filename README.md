@@ -55,6 +55,7 @@ Dexterous grasp pose detection network built upon [MinkowskiEngine](https://gith
 
 ## Collecting data
 ```bash
+    python realsense.py
     sh command_collect_multifinger_grasp_data.sh
 ```
 
