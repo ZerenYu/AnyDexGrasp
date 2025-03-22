@@ -66,3 +66,19 @@ Dexterous grasp pose detection network built upon [MinkowskiEngine](https://gith
     sh command_robot_multifinger_grasp.sh
 ```
 
+
+## License
+The code is licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.en) for non-commercial purposes.
+
+
+## Bibtex
+If you find the code useful, please consider citing our paper
+```
+        @article{fang2025anydexgrasp,
+          title={AnyDexGrasp: General Dexterous Grasping for Different Hands with Human-level Learning Efficiency},
+          author={Fang, Hao-Shu and Yan, Hengxu and Tang, Zhenyu and Fang, Hongjie and Wang, Chenxi and Lu, Cewu},
+          journal={arXiv preprint arXiv:2502.16420},
+          year={2025}
+        }
+```
+
