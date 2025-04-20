@@ -61,12 +61,18 @@ RUN cd /app/knn && python3 setup.py install
 
 # Install pointnet2 module
 COPY pointnet2 /app/pointnet2
-RUN cd /app/pointnet2 && python3 setup.py install
+RUN cd /app/pointnet2 && \
+    export TORCH_CUDA_ARCH_LIST="7.0;7.5" && \
+    python3 setup.py install
 
 # Install ur toolbox
 COPY ur_toolbox /app/ur_toolbox
-RUN cd /app/ur_toolbox && pip install .
-RUN cd /app/ur_toolbox/python-urx && pip install . && pip install -r requirements.txt
+RUN cd /app/ur_toolbox && \
+    pip install .
+RUN cd /app/ur_toolbox/python-urx && \
+    pip install . 
+# Not found requirements.txt   
+# && pip install -r requirements.txt
 
 # Create directories for models and data
 RUN mkdir -p /app/logs/data/representation_model/graspnet_v1_newformat/
